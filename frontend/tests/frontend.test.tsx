@@ -334,3 +334,11 @@ test('skip link focuses content without changing the current route', async () =>
   assert.equal(window.location.hash, '');
   assert.equal(document.activeElement?.id, 'main-content');
 });
+
+
+test('legacy history links retain filters and migrate to clean URLs', async () => {
+  await mount('/history?camera=A&demo=1');
+  assert.equal(window.location.pathname, '/cameras/archive');
+  assert.equal(window.location.search, '?camera=A&demo=1');
+  assert.equal(window.location.hash, '');
+});

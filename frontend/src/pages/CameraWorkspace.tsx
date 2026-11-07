@@ -1,6 +1,9 @@
 import { navigate } from '../lib/navigation';
 import { isConnectedMode } from '../lib/api';
 import ModelResults from '../components/ModelResults';
+import PoseOverlay from '../components/PoseOverlay';
+import type { ModelResult, PoseFrames } from '../lib/model-result';
+import { workspaceApi } from '../lib/workspace-api';
 import { useEffect, useId, useRef, useState } from 'react';
 import { AlertCircle, ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, Camera, ChevronDown, Clock3, FileVideo, FolderArchive, HardDrive, LoaderCircle, Maximize2, Plus, Radio, Save, Search, ShieldCheck, Sparkles, Tag, Upload, Users, X } from 'lucide-react';
 import { Badge, Dialog, EmptyState, IconButton, PageTitle, SectionTitle } from '../components/UI';
@@ -85,15 +88,54 @@ export function RecordingDetail({ recordingId, recordings, playback, onAttach, n
   const player = useRef<HTMLVideoElement>(null);
   const [videoTime, setVideoTime] = useState(0);
   const [readyRecording, setReadyRecording] = useState<Recording | null>(null);
+  const [modelResult, setModelResult] = useState<ModelResult | null>(null);
+  const [showSkeleton, setShowSkeleton] = useState(true);
+  const [poseFrames, setPoseFrames] = useState<PoseFrames | null>(null);
+  const [poseMessage, setPoseMessage] = useState('Loading frame-by-frame skeleton…');
+  const [poseFailed, setPoseFailed] = useState(false);
+  const [poseRevision, setPoseRevision] = useState(0);
+  useEffect(() => {
+    if (recording?.source !== 'service') return;
+    let active = true;
+    let timer: ReturnType<typeof setTimeout>;
+    async function refresh() {
+      try {
+        const data = await workspaceApi.poseFrames(recordingId);
+        if (!active) return;
+        if ('schema_version' in data) { setPoseFrames(data); setPoseFailed(false); setPoseMessage(`${data.fps} FPS · ${data.pose_model} · synchronized to video frames`); return; }
+        setPoseMessage(data.message || 'Preparing frame-by-frame skeleton…'); setPoseFailed(data.status === 'failed');
+        if (data.status === 'failed') return;
+      } catch (cause) { if (active) setPoseMessage(cause instanceof Error ? cause.message : 'Could not load the skeleton. Retrying…'); }
+      if (active) timer = setTimeout(refresh, 3000);
+    }
+    void refresh();
+    return () => { active = false; clearTimeout(timer); };
+  }, [recordingId, recording?.source, poseRevision]);
+  async function retryPose() {
+    setPoseFailed(false); setPoseMessage('Starting frame analysis…');
+    try { await workspaceApi.analyzePose(recordingId); setPoseRevision(value => value + 1); }
+    catch (cause) { setPoseFailed(true); setPoseMessage(cause instanceof Error ? cause.message : 'Could not start frame analysis.'); }
+  }
   if (!recording) return <><PageTitle title="Recording Not Found" /><a className="button button-dark" href="/cameras/archive"><ArrowLeft size={15} />Open archive</a></>;
   const url = recording.playback_url || (readyRecording?.id === recording.id ? readyRecording.playback_url : undefined) || playback[recording.id];
   const camera = cameras.find(item => item.id === recording.camera_id);
+  const poseSample = modelResult?.samples.find(sample => sample.timestamp_s <= videoTime && videoTime < sample.timestamp_s + sample.sample_interval_s);
   return <>
     <a className="back-link" href="/cameras/archive"><ArrowLeft size={14} />Recording archive</a>
     <PageTitle title={`Camera Recording ${recording.camera_id}`} actions={<><Badge tone={recording.source === 'example' ? 'demo' : 'neutral'}>{recording.source === 'example' ? 'Sample metadata' : recording.source === 'local' ? 'Saved in browser' : 'Saved recordings'}</Badge><button className="button button-dark" onClick={() => setLabeling(true)}><Tag size={16} />Edit employee labels</button></>} />
-    <div className="recording-detail-grid"><section className="panel recording-player-panel"><SectionTitle aside={<Badge>{time(recording.duration_s)}</Badge>}>Saved Recording</SectionTitle><div className="archive-video-player">{url ? <video controls playsInline preload="metadata" ref={player} src={url} onTimeUpdate={event => setVideoTime(event.currentTarget.currentTime)} onSeeked={event => setVideoTime(event.currentTarget.currentTime)} aria-label={`Play recording ${recording.filename}`} onError={() => setError('The video could not be played. Relink the matching file.')} /> : <><WorkstationScene view={camera?.view} variant={recording.camera_id} /><div className="source-waiting-overlay"><span><FileVideo size={27} /></span><strong>{recording.source === 'service' ? 'Preparing browser playback' : 'No recording file linked'}</strong><p>{recording.source === 'service' ? 'The service converts AVI to MP4 before analysis. See processing status below.' : 'Illustration for this archive entry'}</p><button className="button button-lime" onClick={() => setAttach(true)}><Upload size={15} />Link recording file</button></div></>}</div><div className="recording-file-details"><FileVideo size={17} /><div><strong>{recording.filename}</strong><span>{formatDate(recording.recorded_at, { year: 'numeric', hour: '2-digit', minute: '2-digit' })} WIB · {recording.station_id} · {time(recording.duration_s)}</span></div>{url && <button className="text-link" onClick={() => setAttach(true)}>Replace file<Upload size={13} /></button>}</div>{error && <div className="error-message" role="alert"><AlertCircle size={16} /><p>{error}</p></div>}<div className="inline-note"><ShieldCheck size={16} /><p>{recording.source === 'service' ? 'Recording stored by the local model service.' : 'Files are saved in this browser.'}</p></div></section>
+    <div className="recording-detail-grid"><section className="panel recording-player-panel">
+      <SectionTitle aside={<Badge>{time(recording.duration_s)}</Badge>}>Saved Recording</SectionTitle>
+      <div className="archive-video-player">
+        {url ? <video controls playsInline preload="metadata" ref={player} src={url} onTimeUpdate={event => setVideoTime(event.currentTarget.currentTime)} onSeeked={event => setVideoTime(event.currentTarget.currentTime)} aria-label={`Play recording ${recording.filename}`} onError={() => setError('The video could not be played. Relink the matching file.')} /> : <><WorkstationScene view={camera?.view} variant={recording.camera_id} /><div className="source-waiting-overlay"><span><FileVideo size={27} /></span><strong>{recording.source === 'service' ? 'Preparing browser playback' : 'No recording file linked'}</strong><p>{recording.source === 'service' ? 'The service converts AVI to MP4 before analysis. See processing status below.' : 'Illustration for this archive entry'}</p><button className="button button-lime" onClick={() => setAttach(true)}><Upload size={15} />Link recording file</button></div></>}
+        {url && showSkeleton && <PoseOverlay sample={poseSample} frames={poseFrames} video={player} />}
+      </div>
+      {recording.source === 'service' && <div className="skeleton-controls"><label><input type="checkbox" checked={showSkeleton} onChange={event => setShowSkeleton(event.target.checked)} />Show skeleton</label><span role="status">{poseMessage}{!poseFrames && modelResult && ' Showing one-second samples until ready.'}</span>{poseFailed && <button className="button button-outline" onClick={() => void retryPose()}>Retry skeleton analysis</button>}</div>}
+      <div className="recording-file-details"><FileVideo size={17} /><div><strong>{recording.filename}</strong><span>{formatDate(recording.recorded_at, { year: 'numeric', hour: '2-digit', minute: '2-digit' })} WIB · {recording.station_id} · {time(recording.duration_s)}</span></div>{url && <button className="text-link" onClick={() => setAttach(true)}>Replace file<Upload size={13} /></button>}</div>
+      {error && <div className="error-message" role="alert"><AlertCircle size={16} /><p>{error}</p></div>}
+      <div className="inline-note"><ShieldCheck size={16} /><p>{recording.source === 'service' ? 'Recording stored by the local model service.' : 'Files are saved in this browser.'}</p></div>
+    </section>
       <section className="panel recording-label-panel"><SectionTitle aside={<Badge>{recording.labels.length} label</Badge>}>Employees in This Recording</SectionTitle>{recording.labels.length ? <div className="saved-labels">{recording.labels.map((label, index) => <div key={`${label.worker_id}-${index}`}><span className="label-subject-number">{index + 1}</span><div><strong>{label.worker_name}</strong><span>{label.worker_id}</span><p>{label.subject_label}</p><button className="text-link" disabled={!url} onClick={() => { if (player.current) { player.current.currentTime = label.start_s; player.current.focus(); } }}><Clock3 size={12} />{time(label.start_s)}–{time(label.end_s)}</button></div><Badge tone="lime">Manual</Badge></div>)}</div> : <EmptyState icon={Tag} title="No employee labels yet" description="Add identities and subject identifiers for people visible in the recording." compact />}<button className="button button-outline full-width" onClick={() => setLabeling(true)}><Plus size={15} />Manage manual labels</button></section></div>
-    {recording.source === 'service' && <ModelResults recording={recording} currentTime={videoTime} onPlaybackReady={setReadyRecording} />}
+    {recording.source === 'service' && <ModelResults recording={recording} currentTime={videoTime} onPlaybackReady={setReadyRecording} onResultReady={setModelResult} />}
     {labeling && <LabelRecording recording={recording} workers={workers} onSave={onSaveLabels} onClose={() => setLabeling(false)} onSaved={() => { setLabeling(false); notify('Manual recording labels saved.'); }} />}
     {attach && <AttachRecording existing={recording} onAttach={onAttach} onClose={() => setAttach(false)} onSaved={saved => { setAttach(false); notify('Recording saved. Reconfirm the labels for this file.'); navigate(`/recordings/${saved.id}`); }} />}
   </>;

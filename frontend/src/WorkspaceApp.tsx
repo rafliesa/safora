@@ -23,11 +23,14 @@ const navigation = [
 ];
 
 function readRoute() {
-  if (window.location.hash.startsWith('#/')) window.history.replaceState(null, '', window.location.hash.slice(1));
-  const route = (window.location.pathname.replace(/\/$/, '') || '/overview') + window.location.search;
-  if (route.startsWith('/analyze/')) return route.replace('/analyze/', '/cameras/');
-  if (route.startsWith('/processing')) return '/overview';
-  if (route.startsWith('/history')) return '/cameras/archive';
+  const legacy = window.location.hash.startsWith('#/') ? window.location.hash.slice(1) : null;
+  const url = new URL(legacy || window.location.href, window.location.origin);
+  let path = url.pathname.replace(/\/$/, '') || '/overview';
+  if (path.startsWith('/analyze/')) path = path.replace('/analyze/', '/cameras/');
+  if (path === '/processing' || path.startsWith('/processing/')) path = '/overview';
+  if (path === '/history' || path.startsWith('/history/')) path = '/cameras/archive';
+  const route = path + url.search;
+  if (legacy || path !== window.location.pathname) window.history.replaceState(null, '', route);
   return route;
 }
 
@@ -53,6 +56,13 @@ export default function WorkspaceApp() {
   const [period, setPeriod] = useState<Period>(initialPeriod);
   const [date, setDate] = useState(localDate());
   const [example, setExample] = useState(initialExample);
+  useEffect(() => {
+    const narrow = window.matchMedia?.('(max-width: 767px)');
+    if (!narrow) return;
+    const collapse = (event: MediaQueryListEvent) => { if (event.matches) setSidebarCollapsed(true); };
+    narrow.addEventListener('change', collapse);
+    return () => narrow.removeEventListener('change', collapse);
+  }, []);
   const workspace = useWorkspace(date);
   const library = useRecordingLibrary(workspace.recordings, workspace.refresh);
   const [path, query = ''] = route.split('?');
@@ -96,7 +106,7 @@ export default function WorkspaceApp() {
       const link = event.target instanceof window.Element ? event.target.closest('a') : null;
       if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self') || !link.getAttribute('href')?.startsWith('/')) return;
       const url = new URL(link.href);
-      if (url.origin !== window.location.origin) return;
+      if (url.origin !== window.location.origin || !/^\/(overview|employees|cameras|recordings|report)(\/|$)/.test(url.pathname)) return;
       event.preventDefault();
       navigate(url.pathname + url.search + url.hash);
     };

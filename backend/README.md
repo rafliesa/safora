@@ -40,6 +40,21 @@ Ini layanan **lokal**, bind loopback, tanpa login atau peran HSE server. Jangan 
 
 Review HSE di frontend tetap lokal. Endpoint review/worksheet legacy belum diimplementasikan. REBA, Table C, poin RAISE, probabilitas penyakit, dan hasil kebisingan tidak diturunkan dari kelas UW-IOM.
 
+## Repetitions, demo MSD review, and frame skeleton
+
+`result` and CSV exports include repetitions for arms, back, and UW-IOM. A repetition completes on **Low → Moderate → Low**; High may occur inside the bout, but Moderate must have been observed. Missing observations and gaps break the cycle. The player shows the count at its current time and the total for the recording. Exposure percentages are duration-weighted Moderate/High time divided by readable time, with coverage shown separately.
+
+`backend/run.sh` loads `backend/.env`. Set `OPENAI_API_KEY` and optionally `OPENAI_MSD_MODEL` (otherwise `OPENAI_VISION_MODEL`, then `gpt-4.1-mini`). After inference, the backend sends only aggregate exposure measurements to the OpenAI Responses API with structured output and `store: false`. It does not send video, filenames, or employee identities. Interpretations are cached in SQLite; failure leaves the model output intact. Existing completed recordings without a review are queued at startup. Reopening a page does not call OpenAI again.
+
+All recordings appear on `/employees/demo-a` as **Employee A (Demo)**, explicitly assuming one employee for demonstration. This does not change manual labels or verified observation windows. The LLM names candidate MSD conditions and qualitative ergonomic review priorities; clinical disease probability remains null. The UI is English and omits the detailed limitations section.
+
+- `GET /workers/demo-a/msd-analysis`: measured exposure, repetitions, and cached interpretations for all completed recordings.
+- `POST /recordings/{id}/msd-analysis`: start or retry an interpretation; an existing successful result is reused.
+- `GET /recordings/{id}/pose`: cached frame poses, or a pending/failed status.
+- `POST /recordings/{id}/pose`: retry frame-pose extraction.
+
+The skeleton uses the same primary/fallback YOLO checkpoints, image sizes, and foreground-person selection as exposure inference, evaluated on **every video frame**. It is cached once in `backend/data/{id}/pose.json`; failures are recorded in `pose.log`. The browser uses `requestVideoFrameCallback` to follow playback and seeking. Low-confidence joints are omitted. While the full cache is processing, the UI explicitly identifies the one-second fallback. This frame cache is visual evidence: exposure scoring and repetition calculations retain their one-second sampling. Selecting the largest foreground person does not establish identity in multi-person scenes. GPU-enabled PyTorch is recommended for frame-by-frame processing.
+
 ## Pengujian
 
 ```bash

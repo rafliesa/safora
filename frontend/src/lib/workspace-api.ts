@@ -1,7 +1,7 @@
 import { ApiError } from './api';
 import { cameras } from './utils';
 import type { LiveSource, ManualLabel, ObservationWindow, Recording, Worker } from './workforce';
-import type { ModelResult } from './model-result';
+import type { ModelResult, MsdAnalysis, MsdRecordingReview, PoseFrames, PoseStatus } from './model-result';
 import type { NoiseReading } from './assessment-types';
 
 const origin = (import.meta.env?.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '');
@@ -29,6 +29,10 @@ export const workspaceApi = {
   saveLabels: (id: string, labels: ManualLabel[], subjectVerified = false) => call<Recording>(`/recordings/${encodeURIComponent(id)}/labels`, { method: 'PUT', body: JSON.stringify({ labels, subject_verified: subjectVerified }) }).then(recordingUrls),
   recording: (id: string) => call<Recording>(`/recordings/${encodeURIComponent(id)}`).then(recordingUrls),
   modelResult: (id: string) => call<ModelResult>(`/recordings/${encodeURIComponent(id)}/result`),
+  demoMsd: () => call<{ items: MsdRecordingReview[] }>('/workers/demo-a/msd-analysis'),
+  analyzeMsd: (id: string) => call<MsdAnalysis>(`/recordings/${encodeURIComponent(id)}/msd-analysis`, { method: 'POST' }),
+  poseFrames: (id: string) => call<PoseFrames | PoseStatus>(`/recordings/${encodeURIComponent(id)}/pose`, undefined, 60000),
+  analyzePose: (id: string) => call<PoseStatus>(`/recordings/${encodeURIComponent(id)}/pose`, { method: 'POST' }),
   uploadRecording: (file: File, recording: Pick<Recording, 'camera_id' | 'station_id' | 'title' | 'recorded_at'>) => {
     const body = new FormData(); body.append('file', file); body.append('metadata', JSON.stringify(recording));
     return call<Recording>('/recordings', { method: 'POST', body }, 120000).then(recordingUrls);

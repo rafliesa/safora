@@ -7,10 +7,11 @@ import tempfile
 import threading
 import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 from fastapi.testclient import TestClient
 from backend.app import create_app
+from model.repetitions import add_repetitions
 
 RESULT = {'schema_version': 'healy.model.v1', 'input': {'duration_s': 2.5},
           'samples': [{'timestamp_s': i, 'sample_interval_s': min(1, 2.5-i), 'uwiom_level': level}
@@ -25,13 +26,18 @@ def runner(video, output):
     return copy.deepcopy(RESULT)
 
 
+def pose_runner(video, output):
+    output.write_text(json.dumps({'schema_version': 'healy.pose.v1', 'fps': 30, 'width': 1280, 'height': 720, 'frames': [None] * 75}))
+
+
 class ApiTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
         self.probe = patch('backend.app.inspect_video', return_value={'duration_s': 2.5, 'width': 1280, 'height': 720})
         self.probe.start()
-        self.app = create_app(self.root, runner)
+        self.msd_analyzer = Mock(return_value={'status': 'complete', 'interpretation': {'summary': 'Test review'}})
+        self.app = create_app(self.root, runner, msd_analyzer=self.msd_analyzer, pose_runner=pose_runner)
         self.client = TestClient(self.app).__enter__()
 
     def tearDown(self):
@@ -61,7 +67,7 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(record['analysis']['status'], 'complete')
         self.assertNotIn('stored_file', record)
         self.assertEqual(self.observations(), [])
-        self.assertEqual(self.client.get('/recordings/'+record['id']+'/result').json(), RESULT)
+        self.assertEqual(self.client.get('/recordings/'+record['id']+'/result').json(), add_repetitions(copy.deepcopy(RESULT)))
         video = self.client.get(record['playback_url'], headers={'Range': 'bytes=0-3'})
         self.assertEqual(video.status_code, 206)
         self.assertEqual(video.content, b'test')
@@ -69,6 +75,56 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(len(list(csv.DictReader(io.StringIO(csv_result.text)))), 3)
         self.assertEqual(self.client.get('/noise-readings').json(), {'items': []})
         self.assertEqual(self.client.get('/live-sources').json(), {'items': []})
+
+    def test_demo_msd_cached_and_does_not_assign_identity(self):
+        record = self.upload()
+        endpoint = '/recordings/'+record['id']+'/msd-analysis'
+        self.assertEqual(self.client.post(endpoint).status_code, 202)
+        for _ in range(100):
+            report = self.client.get('/workers/demo-a/msd-analysis').json()
+            if report['items'][0]['analysis']['status'] == 'complete': break
+            time.sleep(.01)
+        item = report['items'][0]
+        self.assertEqual(item['analysis']['status'], 'complete')
+        self.assertEqual(report['assignment'], 'demo_assumption')
+        self.assertAlmostEqual(item['metrics']['regions']['uwiom']['exposure_pct'], 100 / 1.5)
+        self.assertIsNone(item['metrics']['regions']['arm']['exposure_pct'])
+        self.assertEqual(self.client.post(endpoint).json()['status'], 'complete')
+        self.msd_analyzer.assert_called_once()
+        self.assertEqual(self.client.get('/recordings/'+record['id']).json()['labels'], [])
+        self.assertEqual(self.observations(), [])
+        self.assertIn('demo-a', [worker['id'] for worker in self.client.get('/workers').json()['items']])
+
+    def test_frame_pose_cache_can_be_read_without_reprocessing(self):
+        record = self.upload()
+        endpoint = '/recordings/'+record['id']+'/pose'
+        for _ in range(100):
+            data = self.client.get(endpoint).json()
+            if data.get('schema_version'): break
+            time.sleep(.01)
+        self.assertEqual(data['fps'], 30)
+        self.assertEqual(len(data['frames']), 75)
+        self.assertEqual(self.client.post(endpoint).json()['status'], 'complete')
+        self.assertEqual(self.client.get('/recordings/missing/pose').status_code, 404)
+
+    def test_msd_failure_can_retry_without_failing_model_analysis(self):
+        record = self.upload()
+        self.msd_analyzer.side_effect = [RuntimeError('OpenAI unavailable'), {'status': 'complete'}]
+        endpoint = '/recordings/'+record['id']+'/msd-analysis'
+        self.client.post(endpoint)
+        for _ in range(100):
+            latest = self.client.get('/recordings/'+record['id']).json()
+            if latest.get('msd_analysis', {}).get('status') == 'failed': break
+            time.sleep(.01)
+        self.assertEqual(latest['analysis']['status'], 'complete')
+        self.assertEqual(latest['msd_analysis']['status'], 'failed')
+        self.client.post(endpoint)
+        for _ in range(100):
+            latest = self.client.get('/recordings/'+record['id']).json()
+            if latest.get('msd_analysis', {}).get('status') == 'complete': break
+            time.sleep(.01)
+        self.assertEqual(latest['msd_analysis']['status'], 'complete')
+        self.assertEqual(self.msd_analyzer.call_count, 2)
 
     def test_avi_conversion_preserves_original_and_serves_mp4(self):
         def convert(video):
@@ -112,7 +168,7 @@ class ApiTests(unittest.TestCase):
     def test_overlap_is_not_double_counted_and_data_survives_restart(self):
         for _ in range(2): self.labels(self.upload())
         self.assertEqual(len(self.observations()), 3)
-        with TestClient(create_app(self.root, runner)) as other:
+        with TestClient(create_app(self.root, runner, pose_runner=pose_runner)) as other:
             self.assertEqual(len(other.get('/recordings').json()['items']), 2)
             rows = other.get('/observations?from=2026-11-07&to=2026-11-07').json()['items']
             self.assertEqual(len(rows), 3)

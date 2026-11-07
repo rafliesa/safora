@@ -3,6 +3,8 @@ from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager, contextmanager
 from datetime import date, datetime, timezone
 import hashlib
+import csv
+import io
 import json
 import logging
 import math
@@ -19,12 +21,14 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, ValidationError, field_validator
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from model.integration import observation_windows
+from model.repetitions import add_repetitions
+from backend.msd import analyze_msd, DEMO_WORKER, DEMO_WORKER_ID
 
 MAX_BYTES = 2 * 1024**3
 
@@ -129,6 +133,14 @@ def run_model(video, output):
     return json.loads((output/'result.json').read_text())
 
 
+def run_pose(video, output):
+    with (video.parent/'pose.log').open('w') as log:
+        subprocess.run([str(ROOT/'model/.venv/bin/python'), str(ROOT/'model/pose_overlay.py'),
+                        '--video', str(video), '--output', str(output),
+                        '--device', os.environ.get('MODEL_DEVICE', 'auto')],
+                       stdout=log, stderr=subprocess.STDOUT, check=True)
+
+
 
 def prepare_playback(video):
     target = video.parent/'playback.mp4'
@@ -142,18 +154,34 @@ def prepare_playback(video):
     return target.name
 
 
-def create_app(data_root=None, runner=run_model):
+def create_app(data_root=None, runner=run_model, msd_analyzer=analyze_msd, pose_runner=run_pose):
     store = Store(data_root or os.environ.get('HEALY_DATA_DIR', ROOT/'backend/data'))
 
     @asynccontextmanager
     async def lifespan(app):
         pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='model')
         app.state.pool = pool
+        app.state.msd_pool = ThreadPoolExecutor(max_workers=1, thread_name_prefix='msd')
         for record in store.all():
             if record['analysis']['status'] in ('queued', 'processing'):
                 store.update(record['id'], analysis={'status': 'failed', 'message': 'Analysis interrupted by service restart. Upload again.'})
+            elif record['analysis']['status'] == 'complete':
+                if (store.root/record['id']/'pose.json').is_file():
+                    store.update(record['id'], pose={'status': 'complete'})
+                elif not record.get('pose'):
+                    queue_pose(record['id'])
+                elif record['pose']['status'] in ('queued', 'processing'):
+                    store.update(record['id'], pose={'status': 'failed', 'message': 'Frame analysis interrupted by restart. Retry skeleton analysis.'})
+                if record.get('msd_analysis', {}).get('status') in ('queued', 'processing'):
+                    store.update(record['id'], msd_analysis={'status': 'failed', 'message': 'Interpretation interrupted by restart. Please retry.'})
+                if not record.get('msd_analysis') and os.environ.get('OPENAI_API_KEY'):
+                    queue_msd(record['id'])
+                elif record.get('msd_analysis', {}).get('status') == 'complete' and record['msd_analysis'].get('language') != 'en' and os.environ.get('OPENAI_API_KEY'):
+                    store.update(record['id'], msd_analysis={'status': 'not_started'})
+                    queue_msd(record['id'])
         yield
         pool.shutdown(wait=True)
+        app.state.msd_pool.shutdown(wait=True)
 
     app = FastAPI(title='HEALY Model Service', lifespan=lifespan)
     app.state.store = store
@@ -187,6 +215,10 @@ def create_app(data_root=None, runner=run_model):
         except Exception:
             logging.exception('Analysis failed for %s', identifier)
             store.update(identifier, analysis={'status': 'failed', 'message': 'Analysis failed. See the local analysis.log or playback.log; upload again to retry.'})
+            return
+        if os.environ.get('OPENAI_API_KEY'):
+            queue_msd(identifier)
+        queue_pose(identifier)
 
     def public(record):
         return {k: v for k, v in record.items() if k not in ('stored_file', 'playback_file')}
@@ -195,7 +227,57 @@ def create_app(data_root=None, runner=run_model):
         record = store.get(identifier)
         if record['analysis']['status'] != 'complete':
             raise HTTPException(409, 'Analysis is not complete')
-        return json.loads((store.root/identifier/'result/result.json').read_text())
+        return add_repetitions(json.loads((store.root/identifier/'result/result.json').read_text()))
+
+    def msd_metrics(identifier):
+        result = result_for(identifier)
+        return {'duration_s': result['input']['duration_s'], 'regions': result['summary']['repetitions'],
+                'repetition_definition': 'Low → Moderate → Low; unknown/gaps interrupt; High may occur within the bout.',
+                'cadence_s': result['input'].get('cadence_s', 1)}
+
+    def process_pose(identifier):
+        record = store.update(identifier, pose={'status': 'processing', 'message': 'Analyzing every video frame with the existing pose model.'})
+        try:
+            pose_runner(store.root/identifier/record['stored_file'], store.root/identifier/'pose.json')
+            store.update(identifier, pose={'status': 'complete'})
+        except Exception:
+            logging.error('Frame pose analysis failed for %s; see pose.log', identifier)
+            store.update(identifier, pose={'status': 'failed', 'message': 'Frame pose analysis failed. Check pose.log, then retry.'})
+
+    def queue_pose(identifier):
+        with store.lock:
+            record = store.get(identifier)
+            if record['analysis']['status'] != 'complete':
+                raise HTTPException(409, 'Wait for exposure analysis to complete')
+            current = record.get('pose', {})
+            if current.get('status') in ('queued', 'processing', 'complete'):
+                return current
+            pending = {'status': 'queued', 'message': 'Waiting for frame-by-frame skeleton analysis.'}
+            store.update(identifier, pose=pending)
+            app.state.pool.submit(process_pose, identifier)
+            return pending
+
+    def process_msd(identifier, metrics):
+        store.update(identifier, msd_analysis={'status': 'processing', 'message': 'The LLM is interpreting exposure and repetitions.'})
+        try:
+            report = msd_analyzer(metrics)
+            store.update(identifier, msd_analysis=report)
+        except RuntimeError as error:
+            store.update(identifier, msd_analysis={'status': 'failed', 'message': str(error)})
+        except Exception:
+            logging.error('Invalid MSD interpretation for %s', identifier)
+            store.update(identifier, msd_analysis={'status': 'failed', 'message': 'Invalid LLM response. Please retry; model results are still saved.'})
+
+    def queue_msd(identifier):
+        with store.lock:
+            metrics = msd_metrics(identifier)
+            current = store.get(identifier).get('msd_analysis', {})
+            if current.get('status') in ('queued', 'processing', 'complete'):
+                return current
+            pending = {'status': 'queued', 'message': 'Waiting for LLM interpretation.'}
+            store.update(identifier, msd_analysis=pending)
+            app.state.msd_pool.submit(process_msd, identifier, metrics)
+            return pending
 
     @app.get('/health')
     def health():
@@ -211,12 +293,35 @@ def create_app(data_root=None, runner=run_model):
 
     @app.get('/workers')
     def workers():
-        workers = {}
+        workers = {DEMO_WORKER_ID: DEMO_WORKER} if store.all() else {}
         for record in store.all():
             for label in record['labels']:
                 workers[label['worker_id']] = {'id': label['worker_id'], 'name': label['worker_name'],
                     'department': record['station_id'], 'initials': ''.join(w[0] for w in label['worker_name'].split())[:2].upper()}
         return {'items': list(workers.values())}
+
+    @app.get('/workers/demo-a/msd-analysis')
+    def demo_msd():
+        return {'worker_id': DEMO_WORKER_ID, 'assignment': 'demo_assumption', 'items': [
+            {'recording_id': record['id'], 'filename': record['filename'], 'recorded_at': record['recorded_at'],
+             'metrics': msd_metrics(record['id']),
+             'analysis': record.get('msd_analysis', {'status': 'not_started', 'message': 'LLM interpretation has not started.'})}
+            for record in store.all() if record['analysis']['status'] == 'complete']}
+
+    @app.post('/recordings/{identifier}/msd-analysis', status_code=202)
+    def start_msd(identifier: str):
+        return queue_msd(identifier)
+
+    @app.get('/recordings/{identifier}/pose')
+    def poses(identifier: str):
+        record = store.get(identifier)
+        if record.get('pose', {}).get('status') == 'complete':
+            return FileResponse(store.root/identifier/'pose.json', media_type='application/json')
+        return record.get('pose', {'status': 'queued', 'message': 'Skeleton analysis starts after exposure analysis.'})
+
+    @app.post('/recordings/{identifier}/pose', status_code=202)
+    def start_pose(identifier: str):
+        return queue_pose(identifier)
 
     @app.get('/recordings')
     def recordings():
@@ -275,10 +380,13 @@ def create_app(data_root=None, runner=run_model):
 
     @app.get('/recordings/{identifier}/samples.csv')
     def csv_result(identifier: str):
-        record = store.get(identifier)
-        if record['analysis']['status'] != 'complete':
-            raise HTTPException(409, 'Analysis is not complete')
-        return FileResponse(store.root/identifier/'result/samples.csv', media_type='text/csv', filename='samples.csv')
+        samples = result_for(identifier)['samples']
+        output = io.StringIO()
+        writer = csv.DictWriter(output, fieldnames=list(samples[0]))
+        writer.writeheader()
+        writer.writerows(samples)
+        return Response('\ufeff' + output.getvalue(), media_type='text/csv',
+                        headers={'Content-Disposition': 'attachment; filename="samples.csv"'})
 
     @app.put('/recordings/{identifier}/labels')
     def save_labels(identifier: str, body: Labels):

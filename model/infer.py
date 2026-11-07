@@ -11,6 +11,7 @@ from argparse import Namespace
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT/'training'))
+from repetitions import add_repetitions
 
 
 def sha256(path):
@@ -108,6 +109,7 @@ def analyze(source, output, *, from_csv=False, duration=None, device='auto', roi
               'summary': {'postural': summary, 'uwiom': {'valid_samples': valid, 'samples': len(samples),
                           'coverage': valid/len(samples), 'level_samples': counts, 'domain_validated': False}},
               'samples': samples}
+    add_repetitions(result)
     with (output/'samples.csv').open('x', encoding='utf-8-sig', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=list(samples[0])); writer.writeheader(); writer.writerows(samples)
     # result.json is the completion marker; failed jobs may contain a partial postures.csv only.

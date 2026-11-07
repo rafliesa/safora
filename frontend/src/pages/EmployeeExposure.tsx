@@ -1,3 +1,5 @@
+import ModelResults from '../components/ModelResults';
+import MsdReview from '../components/MsdReview';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Activity, AlertCircle, ArrowLeft, ArrowUpRight, CalendarDays, Camera, Check, ChevronRight, ClipboardCheck, Clock3, FileSearch, FileText, FileVideo, Info, Layers3, MapPin, MessageSquareText, Search, ShieldCheck, Timer, TrendingUp, Users, Volume2 } from 'lucide-react';
 import { Badge, Dialog, EmptyState, PageTitle } from '../components/UI';
@@ -48,6 +50,7 @@ export default function EmployeeExposure(props: EmployeeExposureProps) {
   const [evidence, setEvidence] = useState<'msd' | 'noise' | null>(null);
   const [reviewing, setReviewing] = useState<EmployeeAssessmentSnapshot | null>(null);
   useEffect(() => { setDetail(null); setEvidence(null); setReviewing(null); }, [workerId, period, date]);
+  if (workerId === 'demo-a') return <><a href="/employees" className="back-link"><ArrowLeft size={14} />Employee dashboard</a><PageTitle title="Employee A (Demo)" /><MsdReview /></>;
   if (!worker || !snapshot) return <><PageTitle title="Employee Unavailable" /><a href="/employees" className="button button-dark"><ArrowLeft size={15} />Employee dashboard</a></>;
   const hasData = snapshot.windows.length > 0 || snapshot.noise.readings.length > 0;
   const reviewTone = review?.status === 'reviewed' ? 'success' : review?.status === 'needs_evidence' ? 'warning' : 'neutral';
@@ -61,6 +64,11 @@ export default function EmployeeExposure(props: EmployeeExposureProps) {
     <div className="exposure-assessment-grid exposure-assessment-single">
       <MsdCard snapshot={snapshot} review={review} onDetails={() => setDetail('msd')} onEvidence={() => setEvidence('msd')} />
     </div>
+    {recordings.filter(recording => recording.source === 'service' && recording.labels.some(label => label.worker_id === workerId)).map(recording => <section key={recording.id} aria-label="Employee model results">
+      <p className="inline-note">{recording.labels.find(label => label.worker_id === workerId)?.subject_label}</p>
+      <a className="text-link" href={`/recordings/${recording.id}`}>Open recording · {recording.filename}</a>
+      <ModelResults recording={recording} currentTime={0} />
+    </section>)}
     <Coverage snapshot={snapshot} />
     <section className="employee-hse-section" aria-labelledby="hse-review-title">
       <div className="employee-hse-heading"><span><ClipboardCheck size={25} strokeWidth={1.5} /></span><h2 id="hse-review-title">HSE Review</h2><Badge tone={reviewTone} dot>{reviewLabel(review)}</Badge></div>
