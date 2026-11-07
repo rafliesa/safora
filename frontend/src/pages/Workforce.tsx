@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, ClipboardCheck, Clock3, Filter, Search, ShieldCheck, Sparkles, TrendingUp, Users, X } from 'lucide-react';
-import { Badge, EmptyState, MetricCard, PageTitle, PeriodTabs, SectionTitle } from '../components/UI';
+import { ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, ClipboardCheck, Filter, Search, Sparkles, TrendingUp, Users, X } from 'lucide-react';
+import { Badge, EmptyState, PageTitle, PeriodTabs, SectionTitle } from '../components/UI';
 import ExposureChart from '../components/ExposureChart';
+import EmployeePie from '../components/EmployeePie';
 import { dateRange, risk } from '../lib/utils';
 import { formatDate, inDateRange, observationMinutes, summarizeWorker, uniqueWindows } from '../lib/workforce';
 import type { ObservationWindow, Recording, Worker, WorkerSummary } from '../lib/workforce';
@@ -51,26 +52,27 @@ function getSummaries(workers: Worker[], windows: ObservationWindow[], from: str
 }
 
 export function CompanyDashboard(props: WorkforceProps) {
-  const { workers, windows, date, period, example, onExample } = props;
+  const { workers, windows, date, period } = props;
   const reviews = useLocalReviews();
   const range = dateRange(date, period);
   const summaries = getSummaries(workers, windows, range.from, range.to, { recordings: props.recordings || [], noiseReadings: props.noiseReadings || [], period, example: props.example, reviews });
   const selected = uniqueWindows(windows.filter(window => inDateRange(window, range.from, range.to)));
-  const observed = summaries.filter(worker => worker.windows.length > 0);
   const pending = summaries.filter(worker => worker.needs_review);
-  const high = observed.filter(worker => (worker.peak_reba || 0) >= 8);
   const usable = selected.reduce((sum, window) => sum + window.usable_s, 0);
+  const reviewShare = workers.length ? pending.length / workers.length * 100 : 0;
+  const riskSegments = [
+    { label: 'Negligible · 1', count: summaries.filter(worker => worker.peak_reba === 1).length, color: '#47769e' },
+    { label: 'Low · 2–3', count: summaries.filter(worker => worker.peak_reba !== null && worker.peak_reba >= 2 && worker.peak_reba <= 3).length, color: '#2e7d62' },
+    { label: 'Medium · 4–7', count: summaries.filter(worker => worker.peak_reba !== null && worker.peak_reba >= 4 && worker.peak_reba <= 7).length, color: '#b7791f' },
+    { label: 'High · 8–10', count: summaries.filter(worker => worker.peak_reba !== null && worker.peak_reba >= 8 && worker.peak_reba <= 10).length, color: '#c65332' },
+    { label: 'Very high · 11–15', count: summaries.filter(worker => worker.peak_reba !== null && worker.peak_reba >= 11 && worker.peak_reba <= 15).length, color: '#991b1b' },
+    { label: 'Not assessed', count: summaries.filter(worker => worker.peak_reba === null || worker.peak_reba < 1 || worker.peak_reba > 15 || !Number.isInteger(worker.peak_reba)).length, color: '#b8c4ce' },
+  ];
   return <>
     <PageTitle title="Workplace Health Overview" actions={<PeriodControls {...props} />} />
-    <div className="metrics-grid">
-      <MetricCard label="Employees observed" value={observed.length} unit="Employees" detail={`${workers.length} identities available`} icon={Users} />
-      <MetricCard label="Employees needing review" value={pending.length} unit="Employees" detail="AI findings requiring HSE review" icon={ClipboardCheck} danger />
-      <MetricCard label="High risk this period" value={high.length} unit="Employees" detail="Peak REBA ≥ 8 · includes unreviewed results" icon={ShieldCheck} />
-      <MetricCard label="Valid employee observation" value={observationMinutes(usable)} unit="Min" detail="Observed time, not scheduled shift duration" icon={Clock3} accent />
-    </div>
     <div className="workforce-overview-grid">
       <section className="panel workforce-trend-panel">
-        <SectionTitle aside={<Badge tone={example ? 'demo' : 'neutral'}>{example ? 'Demo data' : 'Cumulative AI results'}</Badge>}>Company Exposure Trend</SectionTitle>
+        <SectionTitle>Company Exposure Trend</SectionTitle>
         <div className="workforce-chart-heading"><div><strong>{selected.length ? selected.reduce((sum, window) => sum + (window.exposure_points || 0), 0).toFixed(1) : '—'}<span>RAISE points</span></strong><p>{formatDate(range.from)}–{formatDate(range.to, { year: 'numeric' })} · {selected.length} observation intervals</p></div><TrendingUp size={22} /></div>
         <ExposureChart windows={selected} {...range} />
       </section>
@@ -80,7 +82,18 @@ export function CompanyDashboard(props: WorkforceProps) {
         <a className="button button-dark full-width" href="#/employees?review=needed">Open employee dashboard<ArrowRight size={15} /></a>
       </section>
     </div>
-    <section className="panel workforce-recent"><SectionTitle aside={<a href="#/employees" className="text-link">All employees<ArrowRight size={14} /></a>}>Employee Summaries</SectionTitle>{summaries.length ? <WorkerTable summaries={summaries.slice(0, 5)} /> : <EmptyState icon={Users} title="Waiting for the first observation" description="Label employees in a recording to see their results." action={<button className="button button-lime" onClick={onExample}><Sparkles size={16} />Explore the demo dashboard</button>} />}</section>
+    <div className="employee-distributions">
+      <div className="employee-distribution-charts">
+        <EmployeePie key={`review:${period}:${date}`} title="Employee review distribution"
+          chartLabel={`${pending.length} of ${workers.length} employees need review (${Math.round(reviewShare)}%)`}
+          segments={[{ label: 'Need review', count: pending.length, color: '#2d4c69' },
+            { label: 'No review flag', count: workers.length - pending.length, color: '#b8c4ce' }]} />
+        <EmployeePie key={`risk:${period}:${date}`} title="Employee risk distribution"
+          chartLabel={`Peak REBA risk distribution for ${workers.length} employees`}
+          segments={riskSegments} />
+      </div>
+      <div className="employee-distribution-footer"><span>Valid employee observation</span><strong>{observationMinutes(usable)} min</strong><span>Observed time, not scheduled shift duration</span></div>
+    </div>
   </>;
 }
 
@@ -136,8 +149,4 @@ function EmployeeCard({ summary }: { summary: WorkerSummary & { assessment?: Emp
       <a href={'#/employees/' + worker.id} className="text-link" aria-label="View employee details">View details<ArrowUpRight size={15} /></a>
     </div>
   </article>;
-}
-
-function WorkerTable({ summaries }: { summaries: WorkerSummary[] }) {
-  return <div className="table-scroll"><table className="session-table"><thead><tr><th>Employees</th><th>Department</th><th>Valid observation</th><th>Peak REBA</th><th>HSE review</th><th>Detail</th></tr></thead><tbody>{summaries.map(summary => <tr key={summary.worker.id}><td><div className="table-worker"><WorkerAvatar worker={summary.worker} /><div><strong>{summary.worker.name}</strong><small>{summary.worker.id}</small></div></div></td><td>{summary.worker.department}</td><td>{observationMinutes(summary.usable_s)} min</td><td><Badge tone={risk(summary.peak_reba).tone}>{summary.peak_reba ?? '—'} · {risk(summary.peak_reba).label}</Badge></td><td><Badge tone={summary.needs_review ? 'warning' : 'neutral'}>{summary.needs_review ? 'Needs review' : 'No flags'}</Badge></td><td><a className="text-link" href={`#/employees/${summary.worker.id}`}>View details<ArrowUpRight size={14} /></a></td></tr>)}</tbody></table></div>;
 }

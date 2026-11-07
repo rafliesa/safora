@@ -5,7 +5,8 @@ import { afterEach, test } from 'node:test';
 import { act, cleanup, fireEvent, render, renderHook, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../src/App.tsx';
-import { EmployeeDetail } from '../src/pages/Workforce.tsx';
+import { CompanyDashboard, EmployeeDetail } from '../src/pages/Workforce.tsx';
+import EmployeePie from '../src/components/EmployeePie.tsx';
 import { api } from '../src/lib/api.ts';
 import { usePeriodicRefresh } from '../src/lib/useWorkspace.ts';
 import { REFRESH_INTERVAL_MS } from '../src/lib/workforce.ts';
@@ -26,6 +27,21 @@ const summaryRegion = () => screen.getByRole('region', { name: 'Employee and per
 const msdCard = () => screen.getByRole('article', { name: 'MSD Exposure' });
 const noiseCard = () => screen.getByRole('article', { name: 'Noise Exposure' });
 
+test('monthly overview does not construct a date formatter for every observation', () => {
+  const original = Intl.DateTimeFormat;
+  let constructions = 0;
+  Intl.DateTimeFormat = new Proxy(original, { construct(target, args) {
+    constructions++;
+    return Reflect.construct(target, args);
+  } });
+  try {
+    render(<CompanyDashboard workers={exampleWorkers} windows={exampleWindows} recordings={exampleRecordings}
+      noiseReadings={exampleNoiseReadings} date="2026-11-07" period="month" setPeriod={() => {}}
+      setDate={() => {}} example onExample={() => {}} />);
+    assert.ok(constructions < 100, `Constructed ${constructions} date formatters for one monthly render`);
+  } finally { Intl.DateTimeFormat = original; }
+});
+
 test('RAISE branding and separate dashboards; service mode retains honest empty states', async () => {
   window.sessionStorage.setItem('raise-data-mode-v1', 'service');
   await mount('/overview');
@@ -34,7 +50,8 @@ test('RAISE branding and separate dashboards; service mode retains honest empty 
   assert.doesNotMatch(document.body.textContent || '', /HEALY/i);
   assert.ok(screen.getByRole('link', { name: 'Company Dashboard', exact: true }));
   assert.ok(screen.getByRole('link', { name: 'Employee Dashboard', exact: true }));
-  assert.ok(screen.getByText('Waiting for the first observation'));
+  assert.ok(screen.getByText('No reviews in the queue'));
+  assert.equal(screen.queryByText('Employee Summaries'), null);
   assert.equal(screen.queryByText('Priyapta Naufal'), null);
 });
 
@@ -207,7 +224,7 @@ test('new snapshot revisions make an open review stale and leave the new result 
 test('local needs-evidence state is reflected in the company review queue for the same period', async () => {
   const user = userEvent.setup();
   await mount('/overview?period=day&demo=1');
-  const count = () => Number(screen.getByText('Employees needing review').closest('article')?.querySelector('.metric-value')?.textContent?.replace('Employees', ''));
+  const count = () => Number(within(screen.getByRole('region', { name: 'Employee review distribution' })).getByRole('img').getAttribute('aria-label')?.split(' ')[0]);
   const baseline = count();
   act(() => { window.location.hash = '/employees/EMP-6920?period=day'; });
   await waitFor(() => assert.ok(screen.getByRole('heading', { name: 'Jessica Tan' })));
@@ -220,6 +237,50 @@ test('local needs-evidence state is reflected in the company review queue for th
   act(() => { window.location.hash = '/overview'; });
   await waitFor(() => assert.ok(screen.getByRole('heading', { name: 'Workplace Health Overview' })));
   assert.equal(count(), baseline + 1);
+});
+
+test('review pie uses all employees as denominator and handles an empty workforce', () => {
+  const props = { workers: exampleWorkers, windows: [], period: 'day' as const, date: localDate(),
+    setPeriod: () => {}, setDate: () => {}, example: false, onExample: () => {} };
+  const view = render(<CompanyDashboard {...props} />);
+  const region = () => within(screen.getByRole('region', { name: 'Employee review distribution' }));
+  assert.equal(region().getByRole('img').getAttribute('aria-label'), `0 of ${exampleWorkers.length} employees need review (0%)`);
+  view.rerender(<CompanyDashboard {...props} workers={[]} />);
+  assert.equal(region().queryByRole('img'), null);
+  assert.ok(region().getByText('No employees available.'));
+});
+
+test('pie segments show counts and percentages on hover and keyboard focus, including a full circle', async () => {
+  const user = userEvent.setup();
+  const view = render(<EmployeePie title="Risk distribution" chartLabel="Risk chart"
+    segments={[{ label: 'High', count: 2, color: '#991b1b' }, { label: 'Low', count: 6, color: '#2e7d62' }]} />);
+  const region = screen.getByRole('region', { name: 'Risk distribution' });
+  const slice = region.querySelector('path');
+  assert.ok(slice);
+  fireEvent.mouseEnter(slice);
+  assert.equal(region.querySelector('[aria-live]')?.textContent, 'High: 2 of 8 employees (25%)');
+  await user.tab();
+  await user.tab();
+  assert.equal(region.querySelector('[aria-live]')?.textContent, 'Low: 6 of 8 employees (75%)');
+  await user.keyboard('{Escape}');
+  assert.match(region.querySelector('[aria-live]')?.textContent || '', /Hover or select/);
+  view.rerender(<EmployeePie title="Risk distribution" chartLabel="Risk chart"
+    segments={[{ label: 'Not assessed', count: 8, color: '#b8c4ce' }]} />);
+  assert.equal(region.querySelectorAll('circle').length, 1);
+  assert.equal(region.querySelectorAll('path').length, 0);
+});
+
+test('risk distribution separates every REBA band and keeps unassessed employees visible', () => {
+  const scores = [1, 3, 7, 10, 15, null];
+  const workers = scores.map((_, index) => ({ ...exampleWorkers[0], id: `risk-${index}` }));
+  const windows = scores.map((score, index) => ({ ...exampleWindows[0], id: `risk-window-${index}`,
+    worker_id: workers[index].id, observed_at: '2026-11-07T02:00:00Z', reba_score: score }));
+  render(<CompanyDashboard workers={workers} windows={windows} period="day" date="2026-11-07"
+    setPeriod={() => {}} setDate={() => {}} example onExample={() => {}} />);
+  const region = within(screen.getByRole('region', { name: 'Employee risk distribution' }));
+  for (const label of ['Negligible · 1', 'Low · 2–3', 'Medium · 4–7', 'High · 8–10', 'Very high · 11–15', 'Not assessed']) {
+    assert.ok(region.getByRole('button', { name: `${label}: 1 of 6 employees (17%)` }));
+  }
 });
 
 test('recording labels still support multiple workers and survive reload after the rename', async () => {

@@ -1,7 +1,7 @@
 import { APP_NAME } from './lib/brand';
 import { useEffect, useMemo, useState } from 'react';
-import { Activity, AlertCircle, ArrowRight, ArrowUpRight, Bell, Camera, Check, ChevronDown, CircleHelp, Cpu, FolderArchive, HeartPulse, LayoutDashboard, Menu, RefreshCw, ShieldCheck, Sparkles, Stethoscope, Users, X } from 'lucide-react';
-import { Badge, Dialog, IconButton } from './components/UI';
+import { AlertCircle, ArrowRight, ArrowUpRight, Bell, Camera, Check, ChevronDown, CircleHelp, Cpu, FolderArchive, HeartPulse, LayoutDashboard, RefreshCw, ShieldCheck, Sparkles, Users, X } from 'lucide-react';
+import { Badge, Dialog } from './components/UI';
 import { CameraHub, RecordingDetail, SourceDetail } from './pages/CameraWorkspace';
 import { CompanyDashboard, EmployeeDetail, EmployeeDirectory } from './pages/Workforce';
 import Report from './pages/Report';
@@ -15,10 +15,10 @@ import type { Period, VideoAsset } from './lib/types';
 
 type Modal = 'guide' | 'privacy' | 'methods' | 'notifications' | 'service' | null;
 const navigation = [
-  { path: '/overview', icon: LayoutDashboard, label: 'Company Dashboard' },
-  { path: '/employees', icon: Users, label: 'Employee Dashboard' },
-  { path: '/cameras', icon: Camera, label: 'Camera Hub' },
-  { path: '/cameras/archive', icon: FolderArchive, label: 'Recording Archive' },
+  { path: '/overview', icon: LayoutDashboard, label: 'Company Dashboard', shortLabel: 'Overview' },
+  { path: '/employees', icon: Users, label: 'Employee Dashboard', shortLabel: 'Employees' },
+  { path: '/cameras', icon: Camera, label: 'Camera Hub', shortLabel: 'Cameras' },
+  { path: '/cameras/archive', icon: FolderArchive, label: 'Recording Archive', shortLabel: 'Recordings' },
 ];
 
 function readRoute() {
@@ -109,7 +109,6 @@ export default function WorkspaceApp() {
     if (navPath === '/cameras') return section === 'cameras' && resourceId !== 'archive';
     return section === navPath.split('/')[1];
   }
-  function refresh() { workspace.refresh(); setToast('Sync requested. Existing intervals are reused without counting them again.'); }
   const subtitles: Record<string, string> = { overview: 'Company Health Overview', employees: 'Employee Analysis Dashboard', cameras: resourceId === 'archive' ? 'Recording Library' : 'Multi-Camera Hub', recordings: 'Recording & Manual Labels', report: 'Evidence & HSE Review' };
   useEffect(() => { document.title = APP_NAME + ' · ' + (subtitles[section] || 'HSE Workspace'); }, [section]);
   const dateLabel = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'short', timeZone: 'Asia/Jakarta' }).format(new Date());
@@ -118,14 +117,13 @@ export default function WorkspaceApp() {
     <a className="skip-link" href="#main-content" onClick={event => { event.preventDefault(); const main = document.getElementById('main-content'); main?.focus(); main?.scrollIntoView({ block: 'start' }); }}>Skip to content</a>
     <div className="app-shell workforce-shell">
       <header className="app-header">
-        <div className="header-left"><button className="brand" onClick={() => setMenu(!menu)} aria-label={`${APP_NAME}, open workspace menu`} aria-expanded={menu}><span className="brand-symbol"><HeartPulse size={25} strokeWidth={1.65} /></span><span className="brand-copy"><strong>{APP_NAME}<i /></strong></span><ChevronDown size={14} /></button><div className="header-tools"><IconButton icon={Stethoscope} label="HSE workspace guide" onClick={() => setModal('guide')} /><IconButton icon={RefreshCw} label="Sync dashboard data" onClick={refresh} className={workspace.loading ? 'refreshing' : ''} /><IconButton icon={ShieldCheck} label="Privacy and recording storage" onClick={() => setModal('privacy')} /></div></div>
-        <div className="header-right"><div className="header-tools"><IconButton icon={Sparkles} label="RAISE assessment methods" onClick={() => setModal('methods')} /><IconButton icon={Bell} label="Workspace notifications" onClick={() => setModal('notifications')} /></div><div className="header-date"><span />{dateLabel}</div><IconButton icon={Menu} label="Open workspace navigation" onClick={() => setMenu(!menu)} className={`menu-button ${menu ? 'is-open' : ''}`} aria-expanded={menu} /></div>
+        <div className="header-left"><button className="brand" onClick={() => setMenu(!menu)} aria-label={`${APP_NAME}, open workspace menu`} aria-expanded={menu}><span className="brand-symbol"><HeartPulse size={25} strokeWidth={1.65} /></span><span className="brand-copy"><strong>{APP_NAME}<i /></strong></span><ChevronDown size={14} /></button></div>
+        <div className="header-right"><div className="header-date"><span />{dateLabel}</div></div>
         {menu && <><button className="menu-dismiss" aria-label="Close navigation menu" onClick={() => setMenu(false)} /><nav className="workspace-menu" aria-label="Workspace menu"><span className="eyebrow">YOUR HSE WORKSPACE</span>{navigation.map(({ path: navPath, icon: Icon, label }) => <a key={navPath} href={`#${navPath}`} aria-current={isActive(navPath) ? 'page' : undefined} onClick={() => setMenu(false)}><Icon size={17} /><span>{label}</span>{isActive(navPath) ? <Check size={14} /> : <ArrowUpRight size={13} />}</a>)}<button onClick={() => { setMenu(false); setModal('guide'); }}><CircleHelp size={17} />Workflow guide<ArrowUpRight size={13} /></button></nav></>}
       </header>
       <div className="app-body">
-        <aside className="sidebar"><nav aria-label="Main navigation"><a className="sidebar-monogram" href="#/overview" title="RAISE overview" aria-label="RAISE overview"><HeartPulse size={21} strokeWidth={1.6} /></a><span className="sidebar-separator" />{navigation.map(({ path: navPath, icon: Icon, label }) => <a className={`nav-item ${isActive(navPath) ? 'active' : ''}`} key={navPath} href={`#${navPath}`} aria-label={label} aria-current={isActive(navPath) ? 'page' : undefined} title={label}><Icon size={21} strokeWidth={1.7} /><span className="nav-tooltip">{label}</span></a>)}<span className="sidebar-separator" /><button className="nav-item" aria-label="User guide" title="User guide" onClick={() => setModal('guide')}><CircleHelp size={21} strokeWidth={1.7} /></button></nav><button className="sidebar-bottom" aria-label="Service status" onClick={() => setModal('service')} title="Service status"><Activity size={17} /><span /></button></aside>
-        <main id="main-content" tabIndex={-1} aria-busy={workspace.loading}>
-          <div className="workspace-topline"><nav className="dashboard-links" aria-label="Dashboard"><a href="#/overview" className={section === 'overview' ? 'active' : ''}><LayoutDashboard size={14} />Company</a><a href="#/employees" className={section === 'employees' ? 'active' : ''}><Users size={14} />Employees</a><a href="#/cameras" className={section === 'cameras' || section === 'recordings' ? 'active' : ''}><Camera size={14} />Cameras & Archive</a></nav><div className="workspace-data-control" aria-label="Data source"><Badge tone={example ? 'demo' : 'neutral'} dot>{example ? 'Demo data' : 'Service data'}</Badge><button onClick={() => setExample(!example)}>{example ? 'Use service data' : 'View demo results'}<ArrowRight size={13} /></button></div></div>
+        <aside className="workspace-sidebar"><nav className="primary-navigation" aria-label="Main navigation">{navigation.map(({ path: navPath, icon: Icon, label, shortLabel }) => <a key={navPath} href={`#${navPath}`} aria-label={label} aria-current={isActive(navPath) ? 'page' : undefined}><Icon size={17} strokeWidth={1.7} /><span>{shortLabel}</span></a>)}</nav></aside>
+        <main id="main-content" className={section === 'overview' ? 'overview-page' : undefined} tabIndex={-1} aria-busy={workspace.loading}>
           {workspace.error && <div className="error-message service-error" role="alert"><AlertCircle size={18} /><p>{workspace.error}</p><button onClick={workspace.refresh}>Retry sync<RefreshCw size={13} /></button></div>}
           {library.storageError && <div className="error-message service-error" role="alert"><AlertCircle size={18} /><p>{library.storageError}</p></div>}
           {section === 'overview' ? <CompanyDashboard {...shared} />
@@ -136,7 +134,6 @@ export default function WorkspaceApp() {
             : <div className="not-found"><span>404</span><h1>Page not found</h1><p>Return to the dashboard to continue your review.</p><a href="#/overview" className="button button-dark">Company dashboard<ArrowRight size={16} /></a></div>}
         </main>
       </div>
-      <footer className="app-footer"><span><strong>{APP_NAME} WORKSPACE</strong></span><button onClick={() => setModal('service')}><span className={`small-dot ${isConnectedMode && !workspace.error ? 'dot-success' : ''}`} />{example ? 'Demo data preview' : isConnectedMode ? 'Service data' : 'Frontend preview'}<span className="footer-slash">·</span>{workspace.lastSynced ? `Synced ${workspace.lastSynced.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta' })} WIB` : 'Fetching data'}<ArrowUpRight size={12} /></button></footer>
     </div>
     {toast && <div className="toast" role="status"><span><Check size={16} /></span><p>{toast}</p><button aria-label="Dismiss notification" onClick={() => setToast('')}><X size={15} /></button></div>}
     {modal && <WorkspaceDialog modal={modal} onClose={() => setModal(null)} onMethods={() => setModal('methods')} sourcesOnline={workspace.sources.filter(source => source.status === 'online').length} />}

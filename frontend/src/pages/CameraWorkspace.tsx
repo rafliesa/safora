@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { AlertCircle, ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, Camera, ChevronDown, Clock3, FileVideo, FolderArchive, HardDrive, LoaderCircle, Maximize2, Plus, Radio, Save, Search, ShieldCheck, Sparkles, Tag, Upload, Users, Video, X } from 'lucide-react';
+import { AlertCircle, ArrowLeft, ArrowRight, ArrowUpRight, CalendarDays, Camera, ChevronDown, Clock3, FileVideo, FolderArchive, HardDrive, LoaderCircle, Maximize2, Plus, Radio, Save, Search, ShieldCheck, Sparkles, Tag, Upload, Users, X } from 'lucide-react';
 import { Badge, Dialog, EmptyState, IconButton, PageTitle, SectionTitle } from '../components/UI';
 import WorkstationScene from '../components/WorkstationScene';
 import { cameras, localDate, time } from '../lib/utils';
@@ -25,7 +25,7 @@ export function CameraHub({ sources, archive, cameraFilter, ...library }: Librar
     <PageTitle title={archive ? 'Recording Archive' : 'Camera Hub'} actions={<><span className="connection-pill"><span className={`small-dot ${online ? 'dot-success' : ''}`} />{online} cameras connected</span><button className="button button-dark" onClick={() => setUpload(true)}><Plus size={16} />Add recording</button></>} />
     <div className="camera-hub-tabs"><nav aria-label="Camera hub views"><a className={!archive ? 'active' : ''} aria-current={!archive ? 'page' : undefined} href="#/cameras"><Radio size={16} />Camera sources<span>{cameras.length}</span></a><a className={archive ? 'active' : ''} aria-current={archive ? 'page' : undefined} href="#/cameras/archive"><FolderArchive size={16} />Saved recordings<span>{library.recordings.length}</span></a></nav></div>
     {archive ? <RecordingArchive {...library} initialCamera={cameraFilter} /> : <>
-      <div className="hub-toolbar"><div className="toolbar-context"><span className="live-icon"><Video size={17} /></span><strong>Workstation Sources</strong><span className="count-pill">{cameras.length.toString().padStart(2, '0')}</span></div><label className="filter-select"><Camera size={14} /><select value={pod} onChange={event => setPod(event.target.value)} aria-label="Filter workstation pod"><option value="all">All Pods</option>{cameras.map(camera => <option key={camera.id} value={camera.department}>{camera.department}</option>)}</select><ChevronDown size={13} /></label></div>
+      <div className="hub-toolbar"><label className="filter-select workstation-filter"><Camera size={14} /><select value={pod} onChange={event => setPod(event.target.value)} aria-label="Filter workstation pod"><option value="all">All Pods</option>{cameras.map(camera => <option key={camera.id} value={camera.department}>{camera.department}</option>)}</select><ChevronDown size={13} /></label></div>
       <div className="camera-grid">{visible.map((camera, index) => {
         const source = sources.find(item => item.camera_id === camera.id);
         const live = source?.status === 'online';

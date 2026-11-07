@@ -122,12 +122,20 @@ export function dailyTotals(windows: ObservationWindow[], from: string, to: stri
   const end = new Date(`${to}T12:00:00Z`);
   while (cursor <= end) { dates.push(cursor.toISOString().slice(0, 10)); cursor.setUTCDate(cursor.getUTCDate() + 1); }
   const selected = uniqueWindows(windows);
+  const byDate = new Map<string, { points: number; usable_s: number; windows: number }>();
+  for (const window of selected) {
+    const date = localDate(new Date(window.observed_at));
+    const total = byDate.get(date) || { points: 0, usable_s: 0, windows: 0 };
+    total.points += window.exposure_points ?? 0;
+    total.usable_s += window.usable_s;
+    total.windows++;
+    byDate.set(date, total);
+  }
   let cumulative = 0;
   return dates.map(date => {
-    const day = selected.filter(window => localDate(new Date(window.observed_at)) === date);
-    const points = day.reduce((sum, window) => sum + (window.exposure_points ?? 0), 0);
-    cumulative += points;
-    return { date, points, cumulative, usable_s: day.reduce((sum, window) => sum + window.usable_s, 0), windows: day.length };
+    const total = byDate.get(date) || { points: 0, usable_s: 0, windows: 0 };
+    cumulative += total.points;
+    return { date, ...total, cumulative };
   });
 }
 

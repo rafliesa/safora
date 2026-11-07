@@ -138,9 +138,18 @@ button:disabled, .button:disabled { opacity: .5; }
 .badge-danger { background: var(--color-risk-high-bg); color: var(--color-risk-high-fg); }
 .badge-info, .badge-demo, .badge-lime { background: var(--color-surface-blue); color: var(--color-brand-deep); }
 .count-pill { font-size: 12px; border-color: var(--color-border); color: var(--color-brand-deep); padding: 4px 6px; line-height: 1.3; }
-.period-tabs { padding: 4px; gap: 4px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface-muted); }
-.period-tabs > button, .page-actions .period-tabs > button { min-height: 38px; font-size: 13px; padding: 9px 14px; border-radius: 8px; color: var(--color-text-secondary); }
-.period-tabs > button.active { color: white; background: var(--color-brand-deep); font-weight: 600; }
+.period-tabs { display: grid; grid-template-columns: repeat(3, 1fr); position: relative; isolation: isolate; padding: 4px; gap: 4px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface-muted); }
+.period-tabs::before { content: ''; position: absolute; z-index: -1; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 16px) / 3); border-radius: 8px; background: var(--color-brand-deep); transition: transform 220ms cubic-bezier(.2,.8,.2,1); }
+.period-tabs[data-period="week"]::before { transform: translateX(calc(100% + 4px)); }
+.period-tabs[data-period="month"]::before { transform: translateX(calc(200% + 8px)); }
+.period-tabs > button, .page-actions .period-tabs > button { min-height: 38px; font-size: 13px; font-weight: 600; padding: 9px 14px; border-radius: 8px; color: var(--color-text-secondary); background: transparent; transition: color 180ms ease; }
+.period-tabs > button.active { color: white; background: transparent; font-weight: 600; }
+.exposure-plot { animation: exposure-period-enter 200ms ease-out; }
+@keyframes exposure-period-enter { from { opacity: .35; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .period-tabs::before, .period-tabs > button { transition: none; }
+  .exposure-plot { animation: none; }
+}
 .date-filter, .filter-select, .search-field { min-height: 44px; height: auto; border: 1px solid var(--color-border-strong); border-radius: 10px; color: var(--color-brand-deep); background: white; padding: 0 12px; }
 .date-filter input, .filter-select select, .search-field input { min-height: 42px; font-size: 13px; color: var(--color-text-secondary); padding-top: 9px; padding-bottom: 9px; }
 .date-filter input { max-width: 130px; }
@@ -165,6 +174,23 @@ button:disabled, .button:disabled { opacity: .5; }
 .metric-accent { background: var(--color-highlight); border-color: var(--color-highlight); }
 .metric-accent .metric-label, .metric-accent .metric-value, .metric-accent .metric-value > span, .metric-accent > p { color: var(--color-ink); }
 .metric-danger .metric-value { color: var(--color-risk-high-fg); }
+.employee-distributions { margin-bottom: 24px; }
+.employee-distribution-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.employee-pie { min-width: 0; padding: 24px; }
+.employee-pie h2 { font-size: 16px; color: var(--color-brand-deep); margin: 0 0 16px; }
+.employee-pie-body { display: flex; align-items: center; flex-wrap: wrap; gap: 20px; }
+.employee-pie svg { width: 144px; height: 144px; flex: 0 0 144px; }
+.employee-pie svg path, .employee-pie svg circle { cursor: pointer; transition: opacity 150ms ease; }
+.employee-pie-legend { display: grid; gap: 3px; flex: 1 1 160px; min-width: 0; }
+.employee-pie-legend button { display: flex; align-items: center; gap: 8px; min-height: 32px; padding: 5px 7px; border-radius: 5px; text-align: left; color: var(--color-text-secondary); font-size: 12px; }
+.employee-pie-legend button:hover, .employee-pie-legend button:focus-visible { background: var(--color-surface-muted); }
+.employee-pie-legend i { width: 10px; height: 10px; flex-shrink: 0; border-radius: 2px; }
+.employee-pie-legend strong { margin-left: auto; font-variant-numeric: tabular-nums; }
+.employee-pie-detail { min-height: 38px; margin: 12px 0 4px; color: var(--color-brand-deep); font-size: 12px; line-height: 1.5; }
+.employee-distribution-footer { display: flex; align-items: baseline; flex-wrap: wrap; gap: 8px 16px; border-top: 1px solid var(--color-border); margin-top: 20px; padding-top: 16px; font-size: 12px; color: var(--color-text-secondary); }
+.employee-distribution-footer strong { font-size: 20px; color: var(--color-ink); }
+@media (max-width: 900px) { .employee-distribution-charts { grid-template-columns: 1fr; gap: 24px; } }
+@media (prefers-reduced-motion: reduce) { .employee-pie svg path, .employee-pie svg circle { transition: none; } }
 .workforce-overview-grid { gap: 24px; grid-template-columns: minmax(0, 1.7fr) minmax(310px, 1fr); margin-bottom: 24px; }
 .workforce-chart-heading strong { font-size: 38px; line-height: 1.3; color: var(--color-ink); font-weight: 800; }
 .workforce-chart-heading strong > span, .workforce-chart-heading p { font-size: 12px; color: var(--color-text-muted); letter-spacing: 0; line-height: 1.5; }

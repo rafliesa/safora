@@ -13,8 +13,12 @@ export function time(seconds: number): string {
   return `${String(Math.floor(value / 60)).padStart(2, '0')}:${String(value % 60).padStart(2, '0')}`;
 }
 
+const jakartaDateFormatter = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' });
+
 export function localDate(value = new Date(), timezone = 'Asia/Jakarta'): string {
-  const parts = new Intl.DateTimeFormat('en-CA', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(value);
+  const formatter = timezone === 'Asia/Jakarta' ? jakartaDateFormatter
+    : new Intl.DateTimeFormat('en-CA', { timeZone: timezone, year: 'numeric', month: '2-digit', day: '2-digit' });
+  const parts = formatter.formatToParts(value);
   return ['year', 'month', 'day'].map(type => parts.find(part => part.type === type)?.value || '').join('-');
 }
 

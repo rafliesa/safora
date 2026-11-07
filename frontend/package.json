@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
+    "dev": "vite --host localhost",
     "build": "tsc -b && vite build",
-    "preview": "vite preview --host 127.0.0.1",
+    "preview": "vite preview --host localhost",
     "test": "tsx --test tests/domain.test.ts tests/api.test.ts tests/workforce.test.ts tests/recordings.test.ts tests/assessment.test.ts tests/reviews.test.ts tests/frontend.test.tsx"
   },
   "dependencies": {

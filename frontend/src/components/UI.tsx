@@ -25,7 +25,7 @@ export function EmptyState({ icon: Icon = CircleHelp, title, description, action
 }
 
 export function PeriodTabs({ value, onChange }: { value: Period; onChange: (value: Period) => void }) {
-  return <div className="period-tabs" aria-label="Observation period">{([['day', 'Day'], ['week', 'Week'], ['month', 'Month']] as const).map(([key, label]) => <button type="button" aria-pressed={value === key} className={value === key ? 'active' : ''} key={key} onClick={() => onChange(key)}>{label}</button>)}</div>;
+  return <div className="period-tabs" data-period={value} aria-label="Observation period">{([['day', 'Day'], ['week', 'Week'], ['month', 'Month']] as const).map(([key, label]) => <button type="button" aria-pressed={value === key} className={value === key ? 'active' : ''} key={key} onClick={() => onChange(key)}>{label}</button>)}</div>;
 }
 
 export function MetricCard({ label, value, unit, detail, icon: Icon, accent, danger }: { label: string; value: string | number; unit?: string; detail: string; icon: LucideIcon; accent?: boolean; danger?: boolean }) {
