@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "data_origin": "unknown",
+  "note": "Isi dengan pengukuran atau penilaian ahli, identitas penilai, dan tanggal. Ubah data_origin setelah input tersedia.",
+  "tasks": [
+    {
+      "id": "task_01",
+      "start_s": 0,
+      "end_s": 30,
+      "cts": {
+        "left": {"applicable": null, "hal": null, "normalized_peak_force": null, "task_hours_per_day": null},
+        "right": {"applicable": null, "hal": null, "normalized_peak_force": null, "task_hours_per_day": null}
+      },
+      "low_back": {
+        "applicable": null,
+        "load_kg": null,
+        "origin_h_cm": null,
+        "origin_v_cm": null,
+        "origin_asymmetry_deg": null,
+        "destination_h_cm": null,
+        "destination_v_cm": null,
+        "destination_asymmetry_deg": null,
+        "destination_control": null,
+        "frequency_per_min": null,
+        "duration_category": null,
+        "coupling": null
+      }
+    }
+  ]
+}

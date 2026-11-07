@@ -1,0 +1,12 @@
+.venv/
+local-env.sh
+__pycache__/
+**/__pycache__/
+outputs/
+archive/
+weights/*.pt
+weights/*.joblib
+training/artifacts/
+training/annotations/**/frames/
+training/annotations/**/hammer_frames/
+training/annotations/**/review/

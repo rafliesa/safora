@@ -1,0 +1,1 @@
+Fixture postures.csv: prediksi 247 sampel video sustAGE User124 WS10 afternoon. Sumber dataset CC BY 4.0: https://zenodo.org/records/7043787 . SHA-256 video sumber e355c53c7ab15cbb17ffafc57240a319e2a22227f2d92c08bd50b7fc04e40145. Ini keluaran model untuk regression test, bukan ground truth klinis.
