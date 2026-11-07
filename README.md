@@ -18,6 +18,20 @@ Buka `http://localhost:3000/`. Tanpa backend, frontend menampilkan **Data demo**
 
 Dari folder `frontend`, `npm run build` menghasilkan `frontend/dist/`. `npm run preview` menyajikan build produksi. `npm test` menjalankan pengujian kontrak, kalkulasi, pembaruan berkala, rekap, label manual, penyimpanan video, dan interaksi UI.
 
+## Model lokal terintegrasi
+
+Backend lokal sekarang tersedia di [backend/README.md](backend/README.md). Setelah bobot dan environment model tersedia, jalankan:
+
+```bash
+uv pip install --python model/.venv/bin/python -r backend/requirements.txt
+bash backend/run.sh
+# Terminal lain:
+printf 'VITE_API_BASE_URL=/api\n' > frontend/.env.local
+npm --prefix frontend run dev
+```
+
+Di **Recording Archive → Add recording**, video tersimpan di server dan otomatis dianalisis. Panel hasil pada halaman rekaman mengikuti waktu video, menampilkan MURI/UW-IOM, cakupan, siklus postur, dan unduhan CSV. Konfirmasi satu pekerja yang sama sepanjang rekaman diperlukan sebelum hasil dikaitkan ke pegawai. REBA/poin tetap belum tersedia; model bukan prediksi probabilitas penyakit.
+
 ## Alur yang tersedia
 
 | Route | Fungsi |
@@ -36,7 +50,7 @@ Route lama `#/analyze/:id`, `#/processing`, dan `#/history` diarahkan ke layar y
 
 ## Analisis otomatis dan data kumulatif
 
-Pipeline berjalan di layanan sumber kamera sejak kamera menyala, terlepas dari apakah dashboard terbuka. Frontend mengambil data setiap **60 detik**, serta saat tab kembali terlihat. Membuka detail kamera atau pegawai hanya membaca data.
+Untuk integrasi kamera live mendatang, pipeline harus berjalan di layanan sumber kamera terlepas dari apakah dashboard terbuka. Implementasi saat ini menganalisis berkas unggahan otomatis; kamera live belum terhubung. Frontend mengambil data setiap **60 detik**, serta saat tab kembali terlihat. Membuka detail kamera atau pegawai hanya membaca data.
 
 Hasil AI langsung masuk ke rekap. Status dan kebutuhan review HSE ditampilkan terpisah; hasil tidak menunggu approval agar terlihat. Penghitungan menggunakan ID interval dan revisi yang stabil: pembaruan mengganti data yang sama, bukan menambahnya lagi. Poin dan waktu diakumulasi; skor REBA ditampilkan sebagai nilai tertinggi pada periode, bukan dijumlahkan.
 
@@ -44,7 +58,7 @@ Detail pegawai berisi hasil periodik; tidak ada panel postur/kondisi live pegawa
 
 ## Rekaman dan label manual
 
-Camera hub menyertakan **16 catatan arsip: 12 historis dan 4 pada hari berjalan**. Catatan ini berlabel **Contoh metadata**. Tidak ada file footage asli dalam repository; catatan belum dapat diputar sampai Anda menautkan video. Ilustrasi tidak diklaim sebagai rekaman.
+Dalam mode tanpa backend, camera hub menyertakan **16 catatan arsip: 12 historis dan 4 pada hari berjalan**. Catatan ini berlabel **Contoh metadata**. Tidak ada file footage asli dalam repository; catatan belum dapat diputar sampai Anda menautkan video. Ilustrasi tidak diklaim sebagai rekaman.
 
 Gunakan **Tambahkan rekaman** atau **Tautkan file rekaman** untuk menyimpan video yang sebenarnya. Tanpa backend, file tersimpan di **IndexedDB** dan metadata/label di **localStorage** perangkat ini. File bisa dibuka kembali setelah refresh. Penyimpanan browser bukan penyimpanan terpusat; menghapus data situs menghapus arsip lokal. Mengganti file mengosongkan label sebelumnya agar identitas perlu dikonfirmasi ulang.
 
@@ -56,7 +70,7 @@ Salin `frontend/.env.example` ke `frontend/.env.local`, isi `VITE_API_BASE_URL`,
 
 [API_CONTRACT.md](./API_CONTRACT.md) mendokumentasikan sumber live, pegawai, interval observasi, rekaman, label, dan review. Adapter alur baru berada di `frontend/src/lib/workspace-api.ts`; kontrak asesmen versi sebelumnya tetap di `frontend/src/lib/api.ts` untuk layar laporan.
 
-Sumber live harus memberikan URL video yang kompatibel dengan browser. Frontend tidak mengakses kamera fisik atau memulai perekaman kontinu sendiri. Model, stream, penyimpanan rekaman terpusat, dan pipeline inferensi masih memerlukan layanan backend yang sebenarnya.
+Sumber live harus memberikan URL video yang kompatibel dengan browser. Frontend tidak mengakses kamera fisik atau memulai perekaman kontinu sendiri. Model, penyimpanan rekaman lokal, dan inferensi berkas sudah terhubung melalui backend lokal. Stream kamera live dan deployment terautentikasi belum tersedia.
 
 ## Metode dan provenance
 

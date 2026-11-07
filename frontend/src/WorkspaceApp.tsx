@@ -51,7 +51,7 @@ export default function WorkspaceApp() {
   const [date, setDate] = useState(localDate());
   const [example, setExample] = useState(initialExample);
   const workspace = useWorkspace(date);
-  const library = useRecordingLibrary(workspace.recordings);
+  const library = useRecordingLibrary(workspace.recordings, workspace.refresh);
   const [path, query = ''] = route.split('?');
   const section = path.split('/')[1];
   let resourceId = '';

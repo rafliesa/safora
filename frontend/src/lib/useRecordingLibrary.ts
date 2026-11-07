@@ -7,13 +7,16 @@ import { validateLabels } from './workforce';
 import type { ManualLabel, Recording } from './workforce';
 import { workspaceApi } from './workspace-api';
 
-export function useRecordingLibrary(serviceRecordings: Recording[]) {
+export function useRecordingLibrary(serviceRecordings: Recording[], onServiceChange?: () => void) {
   const [local, setLocal] = useState(readLocalRecordings);
   const [playback, setPlayback] = useState<Record<string, string>>({});
   const [storageError, setStorageError] = useState('');
   const recordings = useMemo(() => {
-    const entries = new Map(exampleRecordings.map(recording => [recording.id, recording]));
-    for (const recording of [...local, ...serviceRecordings]) entries.set(recording.id, recording);
+    const entries = new Map((isConnectedMode ? [] : exampleRecordings).map(recording => [recording.id, recording]));
+    for (const recording of [...local, ...serviceRecordings]) {
+      const previous = entries.get(recording.id);
+      if (!previous || (recording.revision || 0) >= (previous.revision || 0)) entries.set(recording.id, recording);
+    }
     return [...entries.values()].sort((a, b) => b.recorded_at.localeCompare(a.recorded_at));
   }, [local, serviceRecordings]);
   const localFiles = recordings.filter(recording => recording.local_file_id).map(recording => `${recording.id}:${recording.local_file_id}`).join('|');
@@ -36,23 +39,30 @@ export function useRecordingLibrary(serviceRecordings: Recording[]) {
     try { writeLocalRecordings(next); }
     catch { throw new Error('Changes could not be saved. Browser storage is full or restricted.'); }
     setLocal(next);
+    if (recording.source === 'service') onServiceChange?.();
     return recording;
   }
 
-  async function saveLabels(id: string, labels: ManualLabel[]) {
+  async function saveLabels(id: string, labels: ManualLabel[], subjectVerified = false) {
     const recording = recordings.find(item => item.id === id);
     if (!recording) throw new Error('Recording not found.');
     const validation = validateLabels(labels, recording.duration_s);
     if (validation) throw new Error(validation);
-    if (isConnectedMode && recording.source === 'service') return persist(await workspaceApi.saveLabels(id, labels));
+    if (isConnectedMode && recording.source === 'service') return persist(await workspaceApi.saveLabels(id, labels, subjectVerified));
     return persist({ ...recording, labels, labels_updated_at: new Date().toISOString() });
   }
 
   async function attachVideo(file: File, cameraId: string, existingId?: string, recordedAt?: string): Promise<Recording> {
     if (recordedAt && Number.isNaN(new Date(recordedAt).getTime())) throw new Error('Invalid recording start time. Check the date and time in WIB.');
-    if (!file.type.startsWith('video/') && !/\.(mp4|webm|mov|m4v|ogg)$/i.test(file.name)) throw new Error('Choose an MP4 or WebM video supported by your browser.');
-    const metadata = await inspectVideo(file);
+    if (!file.type.startsWith('video/') && !/\.(mp4|webm|mov|m4v|ogg|avi|mkv)$/i.test(file.name)) throw new Error('Choose an MP4 or WebM video supported by your browser.');
     const existing = recordings.find(recording => recording.id === existingId);
+    if (isConnectedMode) return persist(await workspaceApi.uploadRecording(file, {
+      camera_id: cameraId, station_id: existing?.station_id || `STATION-${cameraId}`,
+      title: existing?.title || file.name,
+      recorded_at: recordedAt || existing?.recorded_at || new Date().toISOString(),
+    }));
+    if (/\.(avi|mkv)$/i.test(file.name)) throw new Error('AVI and MKV uploads require the local model service.');
+    const metadata = await inspectVideo(file);
     const id = existing?.id || `local-${crypto.randomUUID()}`;
     const recording: Recording = {
       id, camera_id: cameraId, station_id: existing?.station_id || `STATION-${cameraId}`,
@@ -61,7 +71,6 @@ export function useRecordingLibrary(serviceRecordings: Recording[]) {
       duration_s: metadata.duration_s, width: metadata.width, height: metadata.height,
       content_hash: metadata.content_hash, source: 'local', labels: [],
     };
-    if (isConnectedMode) return persist(await workspaceApi.uploadRecording(file, recording));
     const fileId = `${id}-${crypto.randomUUID()}`;
     await storeVideo(fileId, file);
     return persist({ ...recording, local_file_id: fileId });
