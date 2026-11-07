@@ -14,7 +14,7 @@ Backend menyimpan rekaman dan membuat job
 Frontend polling GET /observations dan GET /recordings
 ```
 
-Model berjalan di backend/worker, bukan di browser. Folder ini menyediakan inferensi dan adapter Python; **server API, database, antrean job, penyimpanan upload, dan autentikasi belum disediakan**. Dashboard demo lama bukan backend yang memenuhi kontrak origin.
+Model berjalan di backend/worker, bukan di browser. Folder ini menyediakan inferensi dan adapter Python. **Server API lokal, SQLite, antrean job, dan penyimpanan upload sudah diimplementasikan di [../backend/](../backend/README.md)**. Autentikasi produksi belum disediakan. Dashboard demo lama bukan backend yang memenuhi kontrak origin.
 
 Frontend origin mempunyai timeout request 15 detik dan polling 60 detik. Endpoint upload harus mengembalikan `Recording` sesudah file tersimpan; jangan menunggu seluruh analisis di request tersebut. Job berjalan terpisah. Tidak ada tombol POST untuk memulai analisis dalam alur frontend baru. Sumber kamera harus diproses oleh layanan independen dari tab browser; CLI ini memproses berkas, belum membuka RTSP atau menyambung hitungan antarsegmen live.
 
@@ -100,7 +100,7 @@ Aturan adapter:
 - ID stabil dibuat dari recording, worker, dan batas interval. Analisis ulang/koreksi wajib menaikkan `revision`; refresh biasa mengembalikan revisi sama. Backend menangani persistensi revisi serta deduplikasi liputan antarrekaman/kamera.
 - `recorded_at` wajib punya timezone. `observed_at` dihitung dari waktu rekaman ditambah waktu relatif, bukan waktu polling dashboard.
 
-Lihat [examples/observations.json](examples/observations.json) untuk bentuk respons menggunakan ID contoh. Field `msd` yang meminta worksheet/Table C/episode tidak diisi karena model belum menghasilkan bukti tersebut. Frontend dapat menampilkan finding dan durasi; kartu REBA/poin memang akan tetap belum tersedia. Untuk panel UW-IOM lengkap, tambahkan kontrak hasil model tersendiri pada backend/frontend; jangan menyamarkannya sebagai REBA agar komponen lama terisi.
+Lihat [examples/observations.json](examples/observations.json) untuk bentuk respons menggunakan ID contoh. Field `msd` yang meminta worksheet/Table C/episode tidak diisi karena model belum menghasilkan bukti tersebut. Frontend dapat menampilkan finding dan durasi; kartu REBA/poin memang akan tetap belum tersedia. Panel UW-IOM pada halaman rekaman menggunakan endpoint tersendiri `/recordings/:id/result`; jangan menyamarkannya sebagai REBA agar komponen lama terisi.
 
 ## 4. Hubungkan frontend Vite
 
@@ -110,7 +110,7 @@ Pada proyek frontend origin, atur `frontend/.env.local`:
 VITE_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-Alamat itu milik backend yang akan dibuat, bukan model CLI. Restart Vite setelah mengubah env. Jika frontend berada di mesin lain, gunakan alamat backend yang dapat dijangkau browser pengguna. Backend perlu mengizinkan CORS untuk origin frontend yang sebenarnya dan menangani preflight/OPTIONS.
+Alamat itu milik backend lokal pada `backend/run.sh`, bukan model CLI. Untuk Vite dev, gunakan `/api` agar memakai proxy port 8000 yang sudah dikonfigurasi. Restart Vite setelah mengubah env. Jika frontend berada di mesin lain, gunakan alamat backend yang dapat dijangkau browser pengguna. Backend perlu mengizinkan CORS untuk origin frontend yang sebenarnya dan menangani preflight/OPTIONS.
 
 Minimal rute yang dikonsumsi frontend:
 

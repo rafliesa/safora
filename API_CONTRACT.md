@@ -1,6 +1,6 @@
 # Kontrak layanan frontend RAISE
 
-Gunakan `VITE_API_BASE_URL` untuk origin layanan. Adapter alur otomatis berada di `src/lib/workspace-api.ts`, tipe datanya di `src/lib/workforce.ts`. Endpoint di bawah adalah kontrak integrasi; repository ini tidak menyediakan pipeline kamera atau server inferensi.
+Gunakan `VITE_API_BASE_URL` untuk origin layanan. Adapter alur otomatis berada di `frontend/src/lib/workspace-api.ts`, tipe datanya di `frontend/src/lib/workforce.ts`. Endpoint di bawah adalah kontrak integrasi; backend lokal di `backend/` menjalankan inferensi berkas; pipeline kamera live belum tersedia.
 
 ## Sumber dan hasil otomatis
 
@@ -60,3 +60,15 @@ Error layanan dapat mengirim `{ detail: "Pesan untuk pengguna" }`. Timeout jarin
 `NoiseReading` memuat ID/revision, worker atau area/stasiun, recording_id, start_at/end_at, level_dba nullable, covered_s, dose_contribution_pct nullable, profile nullable, interval_model, instrument_id, source Simulasi, assessment_status, status_priority, finding, rationale, dan interventions. Status ditampilkan dari payload; tidak dipetakan ke Low/Medium/High. Dosis area tidak dianggap dosis personal. Interval personal overlap/profil tidak kompatibel menghasilkan kontribusi gabungan belum tersedia. Untuk minggu, kontribusi ditampilkan per hari, bukan dijumlahkan antarshift.
 
 `buildEmployeeSnapshot` membentuk snapshotId yang stabil untuk pegawai/periode serta revision fingerprint dari interval, pembacaan, dan label sumber yang ditampilkan. Review lokal disimpan pada `raise-hse-reviews-v1` dengan pegawai, periode, from/to, snapshotId, revision, source, reviewer, notes, status, savedAt, dan storage frontend_local. Status adalah needs_evidence atau reviewed; ketiadaan entry berarti Belum direview. Snapshot berubah membuat entry lama tidak berlaku pada tampilan baru. UI pegawai tidak memakai endpoint POST review pada tabel integrasi di atas; endpoint tersebut tetap tersedia untuk integrasi backend di masa depan.
+
+## Ekstensi implementasi model lokal
+
+`Recording` menambahkan `revision`, `subject_verified`, dan `analysis: { status: queued|processing|complete|failed, message, summary? }`. `POST /recordings` mengembalikan 202 setelah penyimpanan/validasi video dan memasukkan job antrean, tanpa menunggu inferensi. Frontend upload memakai timeout 120 detik; pembacaan tetap 15 detik.
+
+- `GET /recordings/:id`: metadata/status terbaru.
+- `GET /recordings/:id/video`: playback, termasuk byte range.
+- `GET /recordings/:id/result`: hasil model `healy.model.v1` setelah complete; 409 bila belum selesai.
+- `GET /recordings/:id/samples.csv`: CSV per detik setelah complete.
+- `PUT /recordings/:id/labels`: `{ labels, subject_verified: boolean }`. Konfirmasi operator harus merujuk tepat satu pekerja depan yang sama, satu label sepanjang rekaman. Tanpa itu, label hanya metadata dan tidak menghasilkan observasi pegawai. Ini bukan face recognition/identity tracking atau approval HSE.
+
+Layanan model mengisi `finding`, usable/flagged interval dari kelas UW-IOM eksperimen dan mempertahankan `reba_score`, `exposure_points` sebagai null. Metadata model/raw per detik dibaca panel rekaman, bukan dipalsukan menjadi worksheet `msd`. Review HSE dan worksheet legacy belum diimplementasikan backend lokal. Baca `backend/README.md` untuk aturan overlap, restart, dan batas deployment.

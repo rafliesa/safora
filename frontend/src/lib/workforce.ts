@@ -36,6 +36,9 @@ export interface Recording {
   height?: number;
   local_file_id?: string;
   labels_updated_at?: string;
+  revision?: number;
+  subject_verified?: boolean;
+  analysis?: { status: 'queued' | 'processing' | 'complete' | 'failed'; message: string };
 }
 
 export interface LiveSource {
