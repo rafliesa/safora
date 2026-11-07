@@ -9,13 +9,14 @@ Alur terbaru mengikuti klarifikasi pengguna di [FLOW.md](./FLOW.md). Perilaku in
 Node.js 20.19+ dan npm:
 
 ```sh
+cd frontend
 npm install
 npm run dev
 ```
 
-Buka `http://127.0.0.1:5173/`. Tanpa backend, frontend menampilkan **Data demo** dengan delapan pegawai dan fixture yang jelas berlabel. Pilih **Gunakan data layanan** untuk mode layanan. Contoh harian lengkap dapat dibuka melalui `#/employees/EMP-8021?period=day&demo=1`. Tidak ada timer yang menciptakan hasil inferensi baru.
+Buka `http://localhost:3000/`. Tanpa backend, frontend menampilkan **Data demo** dengan delapan pegawai dan fixture yang jelas berlabel. Pilih **Gunakan data layanan** untuk mode layanan. Contoh harian lengkap dapat dibuka melalui `#/employees/EMP-8021?period=day&demo=1`. Tidak ada timer yang menciptakan hasil inferensi baru.
 
-`npm run build` menghasilkan `dist/`. `npm run preview` menyajikan build produksi. `npm test` menjalankan pengujian kontrak, kalkulasi, pembaruan berkala, rekap, label manual, penyimpanan video, dan interaksi UI.
+Dari folder `frontend`, `npm run build` menghasilkan `frontend/dist/`. `npm run preview` menyajikan build produksi. `npm test` menjalankan pengujian kontrak, kalkulasi, pembaruan berkala, rekap, label manual, penyimpanan video, dan interaksi UI.
 
 ## Alur yang tersedia
 
@@ -51,9 +52,9 @@ Satu video dapat memiliki beberapa label: ID/nama pegawai, penanda subjek yang t
 
 ## Integrasi backend
 
-Salin `.env.example` ke `.env.local`, isi `VITE_API_BASE_URL`, lalu restart Vite. Backend harus mengizinkan origin frontend melalui CORS. Variabel `VITE_` tersedia di bundle browser; jangan menaruh secret di dalamnya.
+Salin `frontend/.env.example` ke `frontend/.env.local`, isi `VITE_API_BASE_URL`, lalu restart Vite. Backend harus mengizinkan origin frontend melalui CORS. Variabel `VITE_` tersedia di bundle browser; jangan menaruh secret di dalamnya.
 
-[API_CONTRACT.md](./API_CONTRACT.md) mendokumentasikan sumber live, pegawai, interval observasi, rekaman, label, dan review. Adapter alur baru berada di `src/lib/workspace-api.ts`; kontrak asesmen versi sebelumnya tetap di `src/lib/api.ts` untuk layar laporan.
+[API_CONTRACT.md](./API_CONTRACT.md) mendokumentasikan sumber live, pegawai, interval observasi, rekaman, label, dan review. Adapter alur baru berada di `frontend/src/lib/workspace-api.ts`; kontrak asesmen versi sebelumnya tetap di `frontend/src/lib/api.ts` untuk layar laporan.
 
 Sumber live harus memberikan URL video yang kompatibel dengan browser. Frontend tidak mengakses kamera fisik atau memulai perekaman kontinu sendiri. Model, stream, penyimpanan rekaman terpusat, dan pipeline inferensi masih memerlukan layanan backend yang sebenarnya.
 
@@ -65,7 +66,7 @@ Fixture hasil contoh terpisah dari data layanan. Review contoh dapat disimpan se
 
 ## Desain dan verifikasi
 
-React, TypeScript, Vite, Poppins lokal dengan fallback Inter. Tema mengikuti `design.md` revisi 2.0: canvas #F3F3F3, biru baja #47769E, navy #243F57, highlight #9BBEDC, header gradien, judul tebal, kontrol minimum 44 px, dan badge semantik. Nama aplikasi berasal dari `src/lib/brand.ts`. Theme utama berada di `src/raise-theme.css`; gaya layout sebelumnya berada dalam cascade layer `legacy`. Referensi Figcraft lama tidak mengalahkan token desain terbaru.
+React, TypeScript, Vite, Poppins lokal dengan fallback Inter. Tema mengikuti `design.md` revisi 2.0: canvas #F3F3F3, biru baja #47769E, navy #243F57, highlight #9BBEDC, header gradien, judul tebal, kontrol minimum 44 px, dan badge semantik. Nama aplikasi berasal dari `frontend/src/lib/brand.ts`. Theme utama berada di `frontend/src/raise-theme.css`; gaya layout sebelumnya berada dalam cascade layer `legacy`. Referensi Figcraft lama tidak mengalahkan token desain terbaru.
 
 Build produksi dan **61 pengujian** lulus. Uji meliputi fixture MSD/noise yang konsisten, dosis personal versus area, scope hari/minggu, modal bukti tanpa file, revisi snapshot, catatan HSE yang bertahan setelah refresh, penyimpanan video, dan migrasi metadata saat rename. Browser tidak terhubung di lingkungan eksekusi, sehingga pemeriksaan screenshot dan decoding footage nyata belum terverifikasi.
 

@@ -5,3 +5,14 @@ dist/
 .env.local
 .env.*.local
 .healy-qa/
+
+# Local runtime, model binaries, and test videos
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.next/
+*.bin
+/backend/models/
+/test-videos/
+.vite/
