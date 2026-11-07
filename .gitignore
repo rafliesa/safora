@@ -13,6 +13,5 @@ __pycache__/
 .pytest_cache/
 .next/
 *.bin
-/backend/models/
 /test-videos/
 .vite/
