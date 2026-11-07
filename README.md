@@ -1,93 +1,151 @@
 # RAISE
 
-Frontend HSE dengan dua dashboard: **perusahaan** untuk hasil keseluruhan dan antrean review, serta **pegawai** untuk daftar pegawai, rekap periodik, tren kumulatif, dan riwayat. Camera hub menampilkan sumber bersama dan arsip rekaman.
+RAISE is a local HSE workspace for reviewing employee exposure and recorded workplace video. A React frontend connects to a FastAPI backend that queues uploads and runs the packaged MURI and experimental UW-IOM models.
 
-Alur terbaru mengikuti klarifikasi pengguna di [FLOW.md](./FLOW.md). Perilaku ini menggantikan alur tombol mulai analisis dan asumsi pegawai tetap per kamera pada rancangan sebelumnya. Identitas dan hasil tidak diasumsikan dari kamera.
+## Prerequisites
 
-## Menjalankan
+These instructions use Bash on Linux, macOS, or WSL. Install Git, Node.js 20.19+ with npm, and Python with venv and pip support. The existing model environment uses Python 3.13; package availability depends on your OS and Python version.
 
-Node.js 20.19+ dan npm:
+Install FFmpeg with libx264 support for AVI/MKV playback conversion. OpenCV may also need system libraries for your OS. GPU inference requires a compatible PyTorch build and driver; CPU inference can take longer than the video's duration.
 
-```sh
-cd frontend
-npm install
-npm run dev
-```
+## First-time setup
 
-Buka `http://localhost:3000/`. Tanpa backend, frontend menampilkan **Data demo** dengan delapan pegawai dan fixture yang jelas berlabel. Pilih **Gunakan data layanan** untuk mode layanan. Contoh harian lengkap dapat dibuka melalui `#/employees/EMP-8021?period=day&demo=1`. Tidak ada timer yang menciptakan hasil inferensi baru.
+### Clone and install dependencies
 
-Dari folder `frontend`, `npm run build` menghasilkan `frontend/dist/`. `npm run preview` menyajikan build produksi. `npm test` menjalankan pengujian kontrak, kalkulasi, pembaruan berkala, rekap, label manual, penyimpanan video, dan interaksi UI.
+~~~bash
+git clone https://github.com/rafliesa/safora.git
+cd safora
+npm --prefix frontend ci
+python3 -m venv model/.venv
+model/.venv/bin/python -m pip install --upgrade pip
+~~~
 
-## Model lokal terintegrasi
+Run the remaining commands from the repository root. Create a new virtual environment on each machine; do not copy another machine's environment or its optional NixOS-specific model/local-env.sh.
 
-Backend lokal sekarang tersedia di [backend/README.md](backend/README.md). Setelah bobot dan environment model tersedia, jalankan:
+For CPU inference, install PyTorch with:
 
-```bash
-uv pip install --python model/.venv/bin/python -r backend/requirements.txt
+~~~bash
+model/.venv/bin/python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+~~~
+
+For GPU inference, install the PyTorch and torchvision build that matches your OS, GPU, and driver into model/.venv instead of running the CPU-only command. Automatic detection cannot enable GPU support in a CPU-only build.
+
+Then install the project dependencies:
+
+~~~bash
+model/.venv/bin/python -m pip install -r model/requirements.txt -r backend/requirements.txt
+~~~
+
+### Add the trained weights
+
+Model binaries are excluded from Git. Obtain the trained artifacts from the project maintainer and put these files in model/weights/:
+
+- exposure_model.pt
+- muri_model.joblib
+- yolo11s-pose.pt
+- yolo11x-pose.pt
+
+A code clone alone cannot run inference. Use the exact artifacts listed in [the checksum manifest](model/weights/manifest.json). Verify them from the repository root:
+
+~~~bash
+model/.venv/bin/python -c "from model.infer import verify_weights; print(verify_weights())"
+~~~
+
+The backend checks these hashes for each job. Only load trusted model artifacts; renaming unrelated checkpoints will not work.
+
+## Run the frontend and model service
+
+Start the backend in one terminal:
+
+~~~bash
+cd safora
 bash backend/run.sh
-# Terminal lain:
-printf 'VITE_API_BASE_URL=/api\n' > frontend/.env.local
+~~~
+
+If you are already in the repository root, skip the cd command.
+
+Start the frontend in another terminal from the repository root:
+
+~~~bash
+VITE_API_BASE_URL=/api npm --prefix frontend run dev
+~~~
+
+Open **http://localhost:3000** and keep both terminals running. Vite forwards /api requests to the backend at 127.0.0.1:8000.
+
+Select **Gunakan data layanan** if the browser still shows demo data. Open **Recording Archive → Add recording**, upload a video, and wait for **Model exposure results** on the recording page. Uploading queues analysis automatically; you do not need to run training or infer.py separately.
+
+The backend loads model weights when each video job starts, not when the server starts. Each job runs in its own subprocess and reloads the models. A running backend therefore does not prove that the weights and model dependencies are ready.
+
+### GPU selection
+
+Video inference selects CUDA first, then Apple MPS, then CPU, according to availability in PyTorch. The selected device appears in the job's analysis.log. Pose extraction uses this device; other pipeline stages may still run on CPU.
+
+To override automatic selection:
+
+~~~bash
+MODEL_DEVICE=cpu bash backend/run.sh
+# Or use the first CUDA GPU:
+MODEL_DEVICE=0 bash backend/run.sh
+~~~
+
+An explicit override must be available. Automatic selection does not retry a failed GPU job on CPU.
+
+### Storage and troubleshooting
+
+The backend stores recordings, results, and SQLite metadata in backend/data/. Set HEALY_DATA_DIR to choose another directory. Run one backend process: the queue processes one job at a time, and multiple server processes can duplicate work.
+
+Interrupted jobs become failed after restart; upload again to retry. Inspect the recording's analysis.log for inference errors and playback.log for conversion errors. AVI/MKV conversion retains the original and creates a browser-compatible MP4, so allow space for both.
+
+If you see demo data, select service mode and check that both servers are running. Missing weight files or checksum errors require the matching artifacts from the manifest. If GPU execution fails, check the PyTorch installation or restart with MODEL_DEVICE=cpu.
+
+## Frontend-only demo
+
+~~~bash
 npm --prefix frontend run dev
-```
+~~~
 
-Di **Recording Archive → Add recording**, video tersimpan di server dan otomatis dianalisis. Panel hasil pada halaman rekaman mengikuti waktu video, menampilkan MURI/UW-IOM, cakupan, siklus postur, dan unduhan CSV. Konfirmasi satu pekerja yang sama sepanjang rekaman diperlukan sebelum hasil dikaitkan ke pegawai. REBA/poin tetap belum tersedia; model bukan prediksi probabilitas penyakit.
+Choose demo mode to explore sample dashboards without the backend or model weights. Demo results do not represent inference on uploaded videos. Browser-only recordings use IndexedDB, with metadata and labels in localStorage; clearing site data removes that local archive.
 
-## Alur yang tersedia
+## Workspace behavior
 
-| Route | Fungsi |
+| Route | Purpose |
 | --- | --- |
-| `#/overview` | Dashboard perusahaan: pegawai teramati, pegawai perlu review, risiko tinggi periode, waktu usable, tren kumulatif, dan antrean review |
-| `#/employees` | Daftar pegawai dengan pencarian, departemen, filter review, serta periode |
-| `#/employees?review=needed` | Pegawai yang memiliki temuan untuk ditinjau |
-| `#/employees/:id` | Detail pegawai: rekap harian/mingguan, tanggal historis, tren kumulatif, riwayat rekaman, dan review HSE |
-| `#/cameras` | Camera hub tanpa pemilik pegawai tetap |
-| `#/cameras/:id` | Sumber live jika tersedia; status layanan dan rekaman terkait |
-| `#/cameras/archive` | Arsip lintas hari, pencarian, kamera, dan tanggal |
-| `#/recordings/:id` | Pemutar rekaman tersimpan dan label manual untuk satu atau beberapa pegawai |
-| `#/report/:id` | Laporan asesmen backend dan worksheet/review versi, untuk integrasi layanan |
+| #/overview | Company exposure summary and review queue |
+| #/employees | Employee directory and period filters |
+| #/employees?review=needed | Employees with findings to review |
+| #/employees/:id | Daily/weekly exposure, recordings, and local HSE reviews |
+| #/cameras | Camera hub |
+| #/cameras/:id | Source details and associated recordings |
+| #/cameras/archive | Searchable recording archive |
+| #/recordings/:id | Playback, labels, and model results |
+| #/report/:id | Assessment report screen for service integration |
 
-Route lama `#/analyze/:id`, `#/processing`, dan `#/history` diarahkan ke layar yang sesuai dengan alur baru. Tidak ada tombol pengguna untuk memulai inferensi.
+Cameras have no fixed employee owner. A recording can have multiple manual labels, but associating model results with an employee requires confirming exactly one foreground worker throughout the recording. The detector does not track identities across people or cameras.
 
-## Analisis otomatis dan data kumulatif
+The frontend refreshes workspace data every 60 seconds and when the tab becomes visible. HSE review decisions remain in localStorage and apply to a specific employee, period, snapshot, and revision; they are not server approvals.
 
-Untuk integrasi kamera live mendatang, pipeline harus berjalan di layanan sumber kamera terlepas dari apakah dashboard terbuka. Implementasi saat ini menganalisis berkas unggahan otomatis; kamera live belum terhubung. Frontend mengambil data setiap **60 detik**, serta saat tab kembali terlihat. Membuka detail kamera atau pegawai hanya membaca data.
+## Model scope and limitations
 
-Hasil AI langsung masuk ke rekap. Status dan kebutuhan review HSE ditampilkan terpisah; hasil tidak menunggu approval agar terlihat. Penghitungan menggunakan ID interval dan revisi yang stabil: pembaruan mengganti data yang sama, bukan menambahnya lagi. Poin dan waktu diakumulasi; skor REBA ditampilkan sebagai nilai tertinggi pada periode, bukan dijumlahkan.
+MURI predicts posture components; UW-IOM predicts experimental exposure categories. These outputs do not provide REBA scores, RAISE points, clinical MSD probabilities, or noise measurements. Demo fixtures contain assessment fields that the local model does not produce.
 
-Detail pegawai berisi hasil periodik; tidak ada panel postur/kondisi live pegawai. Review membekukan snapshot saat dialog dibuka. Bila hasil/revisi yang ditampilkan berubah, penyimpanan diblokir sampai tinjauan dibuka ulang. Catatan dan keputusan HSE disimpan lokal dengan scope pegawai, periode, snapshotId, revision, dan sumber data.
+The pipeline samples video at 1 Hz. Posture cycles describe transitions between posture categories, not grip counts or lifting repetitions. The camera domain and individual health outcomes remain unvalidated.
 
-## Rekaman dan label manual
+Live camera ingestion, continuous recording, and authenticated deployment are not implemented. The backend binds to loopback and has no login; keep it local.
 
-Dalam mode tanpa backend, camera hub menyertakan **16 catatan arsip: 12 historis dan 4 pada hari berjalan**. Catatan ini berlabel **Contoh metadata**. Tidak ada file footage asli dalam repository; catatan belum dapat diputar sampai Anda menautkan video. Ilustrasi tidak diklaim sebagai rekaman.
+See the [backend guide](backend/README.md), [model guide](model/README.md), [API contract](API_CONTRACT.md), and [workflow specification](FLOW.md) for further details.
 
-Gunakan **Tambahkan rekaman** atau **Tautkan file rekaman** untuk menyimpan video yang sebenarnya. Tanpa backend, file tersimpan di **IndexedDB** dan metadata/label di **localStorage** perangkat ini. File bisa dibuka kembali setelah refresh. Penyimpanan browser bukan penyimpanan terpusat; menghapus data situs menghapus arsip lokal. Mengganti file mengosongkan label sebelumnya agar identitas perlu dikonfirmasi ulang.
+## Validation and production build
 
-Satu video dapat memiliki beberapa label: ID/nama pegawai, penanda subjek yang terlihat, serta interval kemunculan. Rentang tidak valid, penanda subjek duplikat, dan interval bertumpang tindih untuk pegawai yang sama ditolak. Menyimpan label tidak mengubah pemilik kamera. Satu pegawai dapat muncul pada beberapa kamera/rekaman.
+From the repository root:
 
-## Integrasi backend
+~~~bash
+npm --prefix frontend test
+npm --prefix frontend run build
+model/.venv/bin/python -m unittest discover -s model/tests -v
+model/.venv/bin/python -m pip install httpx
+model/.venv/bin/python -m unittest backend.test_app -v
+~~~
 
-Salin `frontend/.env.example` ke `frontend/.env.local`, isi `VITE_API_BASE_URL`, lalu restart Vite. Backend harus mengizinkan origin frontend melalui CORS. Variabel `VITE_` tersedia di bundle browser; jangan menaruh secret di dalamnya.
+On the original NixOS development machine, source model/local-env.sh before running Python checks if that file exists. Fresh installation across operating systems and physical GPU execution still need verification.
 
-[API_CONTRACT.md](./API_CONTRACT.md) mendokumentasikan sumber live, pegawai, interval observasi, rekaman, label, dan review. Adapter alur baru berada di `frontend/src/lib/workspace-api.ts`; kontrak asesmen versi sebelumnya tetap di `frontend/src/lib/api.ts` untuk layar laporan.
-
-Sumber live harus memberikan URL video yang kompatibel dengan browser. Frontend tidak mengakses kamera fisik atau memulai perekaman kontinu sendiri. Model, penyimpanan rekaman lokal, dan inferensi berkas sudah terhubung melalui backend lokal. Stream kamera live dan deployment terautentikasi belum tersedia.
-
-## Metode dan provenance
-
-Metode mengikuti PRD: REBA untuk severity, ISO 11226-inspired untuk durasi/hold, dan poin RAISE eksperimental untuk paparan kumulatif. Skor 11–15 mempertahankan label tindakan segera. Sembilan jam shift asumsi 08:00–17:00 Asia/Jakarta tidak diperlakukan sebagai sembilan jam observasi.
-
-Fixture hasil contoh terpisah dari data layanan. Review contoh dapat disimpan sebagai state frontend lokal, dengan penanda lokal dan scope snapshot; review ini tidak dikirim sebagai approval backend. Hasil contoh juga tidak ditautkan ke video sebenarnya yang menggantikan catatan arsip. Penentuan interval eligible lintas kamera, aturan overlap, kelengkapan worksheet, serta validasi perhitungan tetap menjadi tanggung jawab layanan; frontend tidak menebak hubungan orang antar kamera.
-
-## Desain dan verifikasi
-
-React, TypeScript, Vite, Poppins lokal dengan fallback Inter. Tema mengikuti `design.md` revisi 2.0: canvas #F3F3F3, biru baja #47769E, navy #243F57, highlight #9BBEDC, header gradien, judul tebal, kontrol minimum 44 px, dan badge semantik. Nama aplikasi berasal dari `frontend/src/lib/brand.ts`. Theme utama berada di `frontend/src/raise-theme.css`; gaya layout sebelumnya berada dalam cascade layer `legacy`. Referensi Figcraft lama tidak mengalahkan token desain terbaru.
-
-Build produksi dan **61 pengujian** lulus. Uji meliputi fixture MSD/noise yang konsisten, dosis personal versus area, scope hari/minggu, modal bukti tanpa file, revisi snapshot, catatan HSE yang bertahan setelah refresh, penyimpanan video, dan migrasi metadata saat rename. Browser tidak terhubung di lingkungan eksekusi, sehingga pemeriksaan screenshot dan decoding footage nyata belum terverifikasi.
-
-## Asesmen pegawai dan review lokal
-
-Detail pegawai berisi header identitas/periode/shift/lokasi/waktu hasil, coverage, kartu MSD dan kebisingan, grafik periodik, intervensi dengan alasan/prioritas, bukti multi-kamera, dan tinjauan HSE. Harian/Mingguan memperbarui seluruh scope. Field yang belum tersedia dijelaskan secara eksplisit; metadata bukti tanpa file memakai status **Rekaman belum tersedia**.
-
-Fixture harian EMP-8021: rekaman 40 menit, valid 30 menit, Medium REBA 5, paparan 12 menit (40%), holding terlama 45 detik, 14 episode, 28 poin prototipe, dan 56 poin/jam valid. Pembacaan personal Simulasi 88 dBA selama 40 menit memberi kontribusi 16,7% menurut profil contoh 85/3. Status kebisingan berasal dari fixture, terpisah dari band REBA. Dosis lintas hari tidak dijumlahkan menjadi dosis mingguan.
-
-Aksi **Tandai perlu bukti** dan **Simpan review** memakai localStorage. Review baru berstatus **Belum direview**; review pada pegawai/periode/revisi lain tidak ikut diterapkan. Revisi baru mempertahankan catatan lama dan meminta peninjauan kembali. Warna risiko hanya mengklasifikasikan MSD; status kebisingan tetap mengikuti pembacaan mock.
+The frontend build writes to frontend/dist/. The preview server does not use the development API proxy; production hosting requires an API URL or reverse proxy, appropriate CORS, and authentication. VITE_ variables are public browser configuration, so keep secrets out of them.
