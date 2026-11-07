@@ -124,7 +124,7 @@ def run_model(video, output):
     with (video.parent/'analysis.log').open('w') as log:
         subprocess.run([str(ROOT/'model/.venv/bin/python'), str(ROOT/'model/infer.py'),
                         '--video', str(video), '--output-dir', str(output),
-                        '--device', os.environ.get('MODEL_DEVICE', 'cpu')],
+                        '--device', os.environ.get('MODEL_DEVICE', 'auto')],
                        stdout=log, stderr=subprocess.STDOUT, check=True)
     return json.loads((output/'result.json').read_text())
 

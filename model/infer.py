@@ -26,7 +26,18 @@ def verify_weights():
     return expected
 
 
-def analyze(source, output, *, from_csv=False, duration=None, device='cpu', roi=None):
+def resolve_device(device):
+    if device != 'auto':
+        return device
+    import torch
+    if torch.cuda.is_available():
+        return '0'
+    if torch.backends.mps.is_available():
+        return 'mps'
+    return 'cpu'
+
+
+def analyze(source, output, *, from_csv=False, duration=None, device='auto', roi=None):
     from video_exposure import screen
     from uwiom.model import predict_rows
 
@@ -53,6 +64,8 @@ def analyze(source, output, *, from_csv=False, duration=None, device='cpu', roi=
         shutil.copyfile(source, raw_path)
     else:
         from tabular import export
+        device = resolve_device(device)
+        print(f'Inference device: {device}', flush=True)
         export(Namespace(video=source, model=ROOT/'weights/muri_model.joblib', csv_output=raw_path,
                          start=0, seconds=None, device=device, roi=roi or [0, 0, 1, 1]))
     with raw_path.open(encoding='utf-8-sig', newline='') as file:
@@ -110,7 +123,7 @@ if __name__ == '__main__':
     source.add_argument('--video', type=Path); source.add_argument('--postures', type=Path)
     parser.add_argument('--output-dir', type=Path, required=True)
     parser.add_argument('--duration', type=float, help='Original video duration, required only with --postures')
-    parser.add_argument('--device', default='cpu', help='cpu or GPU device such as 0')
+    parser.add_argument('--device', default='auto', help='auto (CUDA, MPS, then CPU), cpu, mps or GPU index such as 0')
     parser.add_argument('--roi', nargs=4, type=float, metavar=('XMIN', 'YMIN', 'XMAX', 'YMAX'))
     args = parser.parse_args()
     if args.roi and not (0 <= args.roi[0] < args.roi[2] <= 1 and 0 <= args.roi[1] < args.roi[3] <= 1):
