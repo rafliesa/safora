@@ -4,12 +4,20 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from infer import ROOT, analyze, verify_weights
+from infer import ROOT, analyze, verify_weights, resolve_device
 
 
 class InferenceTests(unittest.TestCase):
+    def test_device_selection(self):
+        for cuda, mps, expected in ((True, True, '0'), (False, True, 'mps'), (False, False, 'cpu')):
+            with self.subTest(cuda=cuda, mps=mps), patch('torch.cuda.is_available', return_value=cuda), patch('torch.backends.mps.is_available', return_value=mps):
+                self.assertEqual(resolve_device('auto'), expected)
+                for explicit in ('cpu', '0', '1', 'mps'):
+                    self.assertEqual(resolve_device(explicit), explicit)
+
     def test_packaged_checkpoint_and_csv_pipeline(self):
         source = ROOT/'tests/fixtures/postures.csv'
         expected = json.loads((ROOT/'reports/uwiom.json').read_text())
