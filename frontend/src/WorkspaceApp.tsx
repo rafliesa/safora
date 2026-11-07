@@ -1,6 +1,6 @@
 import { APP_NAME } from './lib/brand';
 import { useEffect, useMemo, useState } from 'react';
-import { AlertCircle, ArrowRight, ArrowUpRight, Bell, Camera, Check, ChevronDown, CircleHelp, Cpu, FolderArchive, HeartPulse, LayoutDashboard, RefreshCw, ShieldCheck, Sparkles, Users, X } from 'lucide-react';
+import { AlertCircle, ArrowRight, Bell, Camera, Check, PanelLeftClose, PanelLeftOpen, Cpu, FolderArchive, HeartPulse, LayoutDashboard, RefreshCw, ShieldCheck, Sparkles, Users, X } from 'lucide-react';
 import { Badge, Dialog } from './components/UI';
 import { CameraHub, RecordingDetail, SourceDetail } from './pages/CameraWorkspace';
 import { CompanyDashboard, EmployeeDetail, EmployeeDirectory } from './pages/Workforce';
@@ -45,7 +45,7 @@ function initialPeriod(): Period {
 export default function WorkspaceApp() {
   const [route, setRoute] = useState(readRoute);
   const [modal, setModal] = useState<Modal>(null);
-  const [menu, setMenu] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => window.innerWidth < 768);
   const [toast, setToast] = useState('');
   const [period, setPeriod] = useState<Period>(initialPeriod);
   const [date, setDate] = useState(localDate());
@@ -87,7 +87,7 @@ export default function WorkspaceApp() {
   const libraryProps = { recordings: library.recordings, playback: library.playback, onAttach: library.attachVideo, notify: setToast };
 
   useEffect(() => {
-    const change = () => { const nextRoute = readRoute(); setRoute(nextRoute); const params = new URLSearchParams(nextRoute.split('?')[1] || ''); if (params.get('demo') === '1') setExample(true); const requestedPeriod = params.get('period'); if (requestedPeriod === 'day' || requestedPeriod === 'week') setPeriod(requestedPeriod); setMenu(false); window.scrollTo({ top: 0, behavior: 'instant' }); document.getElementById('main-content')?.focus({ preventScroll: true }); };
+    const change = () => { const nextRoute = readRoute(); setRoute(nextRoute); const params = new URLSearchParams(nextRoute.split('?')[1] || ''); if (params.get('demo') === '1') setExample(true); const requestedPeriod = params.get('period'); if (requestedPeriod === 'day' || requestedPeriod === 'week') setPeriod(requestedPeriod); if (window.innerWidth < 768) setSidebarCollapsed(true); window.scrollTo({ top: 0, behavior: 'instant' }); document.getElementById('main-content')?.focus({ preventScroll: true }); };
     window.addEventListener('hashchange', change);
     return () => window.removeEventListener('hashchange', change);
   }, []);
@@ -97,12 +97,7 @@ export default function WorkspaceApp() {
     const timer = window.setTimeout(() => setToast(''), 5500);
     return () => window.clearTimeout(timer);
   }, [toast]);
-  useEffect(() => {
-    if (!menu) return;
-    const close = (event: KeyboardEvent) => { if (event.key === 'Escape') setMenu(false); };
-    window.addEventListener('keydown', close);
-    return () => window.removeEventListener('keydown', close);
-  }, [menu]);
+
 
   function isActive(navPath: string) {
     if (navPath === '/cameras/archive') return path === navPath || section === 'recordings';
@@ -111,18 +106,18 @@ export default function WorkspaceApp() {
   }
   const subtitles: Record<string, string> = { overview: 'Company Health Overview', employees: 'Employee Analysis Dashboard', cameras: resourceId === 'archive' ? 'Recording Library' : 'Multi-Camera Hub', recordings: 'Recording & Manual Labels', report: 'Evidence & HSE Review' };
   useEffect(() => { document.title = APP_NAME + ' · ' + (subtitles[section] || 'HSE Workspace'); }, [section]);
-  const dateLabel = new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'short', timeZone: 'Asia/Jakarta' }).format(new Date());
 
   return <>
     <a className="skip-link" href="#main-content" onClick={event => { event.preventDefault(); const main = document.getElementById('main-content'); main?.focus(); main?.scrollIntoView({ block: 'start' }); }}>Skip to content</a>
     <div className="app-shell workforce-shell">
-      <header className="app-header">
-        <div className="header-left"><button className="brand" onClick={() => setMenu(!menu)} aria-label={`${APP_NAME}, open workspace menu`} aria-expanded={menu}><span className="brand-symbol"><HeartPulse size={25} strokeWidth={1.65} /></span><span className="brand-copy"><strong>{APP_NAME}<i /></strong></span><ChevronDown size={14} /></button></div>
-        <div className="header-right"><div className="header-date"><span />{dateLabel}</div></div>
-        {menu && <><button className="menu-dismiss" aria-label="Close navigation menu" onClick={() => setMenu(false)} /><nav className="workspace-menu" aria-label="Workspace menu"><span className="eyebrow">YOUR HSE WORKSPACE</span>{navigation.map(({ path: navPath, icon: Icon, label }) => <a key={navPath} href={`#${navPath}`} aria-current={isActive(navPath) ? 'page' : undefined} onClick={() => setMenu(false)}><Icon size={17} /><span>{label}</span>{isActive(navPath) ? <Check size={14} /> : <ArrowUpRight size={13} />}</a>)}<button onClick={() => { setMenu(false); setModal('guide'); }}><CircleHelp size={17} />Workflow guide<ArrowUpRight size={13} /></button></nav></>}
-      </header>
-      <div className="app-body">
-        <aside className="workspace-sidebar"><nav className="primary-navigation" aria-label="Main navigation">{navigation.map(({ path: navPath, icon: Icon, label, shortLabel }) => <a key={navPath} href={`#${navPath}`} aria-label={label} aria-current={isActive(navPath) ? 'page' : undefined}><Icon size={17} strokeWidth={1.7} /><span>{shortLabel}</span></a>)}</nav></aside>
+      <div className={`app-body ${sidebarCollapsed ? 'sidebar-collapsed' : 'sidebar-expanded'}`}>
+        <aside id="workspace-sidebar" className="workspace-sidebar">
+          <button type="button" className="sidebar-toggle" aria-label={sidebarCollapsed ? 'Open sidebar' : 'Close sidebar'}
+            aria-expanded={!sidebarCollapsed} aria-controls="workspace-sidebar" onClick={() => setSidebarCollapsed(value => !value)}>
+            {sidebarCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
+          </button>
+          <div className="sidebar-heading"><a className="brand" href="#/overview" aria-label={`${APP_NAME}, overview`}><span className="brand-symbol"><HeartPulse size={25} strokeWidth={1.65} /></span><span className="brand-copy"><strong>{APP_NAME}<i /></strong></span></a></div>
+<nav className="primary-navigation" aria-label="Main navigation">{navigation.map(({ path: navPath, icon: Icon, label, shortLabel }) => <a key={navPath} href={`#${navPath}`} aria-label={label} title={label} aria-current={isActive(navPath) ? 'page' : undefined}><Icon size={17} strokeWidth={1.7} /><span>{shortLabel}</span></a>)}</nav></aside>
         <main id="main-content" className={section === 'overview' ? 'overview-page' : undefined} tabIndex={-1} aria-busy={workspace.loading}>
           {workspace.error && <div className="error-message service-error" role="alert"><AlertCircle size={18} /><p>{workspace.error}</p><button onClick={workspace.refresh}>Retry sync<RefreshCw size={13} /></button></div>}
           {library.storageError && <div className="error-message service-error" role="alert"><AlertCircle size={18} /><p>{library.storageError}</p></div>}

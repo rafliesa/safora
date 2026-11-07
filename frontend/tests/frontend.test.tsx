@@ -27,6 +27,20 @@ const summaryRegion = () => screen.getByRole('region', { name: 'Employee and per
 const msdCard = () => screen.getByRole('article', { name: 'MSD Exposure' });
 const noiseCard = () => screen.getByRole('article', { name: 'Noise Exposure' });
 
+test('sidebar title toggle collapses labels while navigation stays accessible', async () => {
+  const user = userEvent.setup();
+  await mount('/overview?demo=1');
+  assert.ok(screen.getByRole('link', { name: 'RAISE, overview' }));
+  assert.equal(screen.queryByRole('button', { name: 'RAISE, open workspace menu' }), null);
+  await user.click(screen.getByRole('button', { name: 'Close sidebar' }));
+  assert.equal(screen.getByRole('button', { name: 'Open sidebar' }).getAttribute('aria-expanded'), 'false');
+  assert.ok(screen.getByRole('navigation', { name: 'Main navigation' }));
+  assert.equal(document.getElementById('workspace-sidebar')?.closest('.app-body')?.classList.contains('sidebar-collapsed'), true);
+  await user.keyboard('{Enter}');
+  assert.ok(screen.getByRole('navigation', { name: 'Main navigation' }));
+  assert.equal(screen.getByRole('button', { name: 'Close sidebar' }).getAttribute('aria-expanded'), 'true');
+});
+
 test('monthly overview does not construct a date formatter for every observation', () => {
   const original = Intl.DateTimeFormat;
   let constructions = 0;
@@ -45,7 +59,7 @@ test('monthly overview does not construct a date formatter for every observation
 test('RAISE branding and separate dashboards; service mode retains honest empty states', async () => {
   window.sessionStorage.setItem('raise-data-mode-v1', 'service');
   await mount('/overview');
-  assert.ok(screen.getByRole('button', { name: 'RAISE, open workspace menu' }));
+  assert.ok(screen.getByRole('link', { name: 'RAISE, overview' }));
   assert.match(document.title, /^RAISE/);
   assert.doesNotMatch(document.body.textContent || '', /HEALY/i);
   assert.ok(screen.getByRole('link', { name: 'Company Dashboard', exact: true }));
