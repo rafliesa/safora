@@ -33,12 +33,12 @@ export function useWorkspace(selectedDate = localDate()) {
     const from = new Date(`${selectedDate}T12:00:00Z`); from.setUTCDate(from.getUTCDate() - 90);
     // Read only: camera/pipeline lifecycle belongs to the service, independently
     // of whether an HSE dashboard is open. There is no POST analysis trigger.
-    const noise = workspaceApi.noiseReadings(localDate(from), selectedDate).then(result => ({ ...result, unavailable: '' })).catch(cause => ({ items: [] as NoiseReading[], unavailable: cause instanceof Error ? `Pembacaan kebisingan belum dapat dimuat: ${cause.message}` : 'Pembacaan kebisingan belum dapat dimuat.' }));
+    const noise = workspaceApi.noiseReadings(localDate(from), selectedDate).then(result => ({ ...result, unavailable: '' })).catch(cause => ({ items: [] as NoiseReading[], unavailable: cause instanceof Error ? `Noise readings could not be loaded: ${cause.message}` : 'Noise readings could not be loaded.' }));
     void Promise.all([workspaceApi.workers(), workspaceApi.observations(localDate(from), selectedDate), workspaceApi.sources(), workspaceApi.recordings(), noise]).then(([people, observations, live, archive, instrument]) => {
       if (!active) return;
       setWorkers(people.items); setWindows(observations.items); setSources(live.items); setRecordings(archive.items); setLastSynced(new Date()); setError('');
       setNoiseReadings(instrument.items); setNoiseUnavailableReason(instrument.unavailable);
-    }).catch(cause => { if (active) setError(cause instanceof Error ? cause.message : 'Pembaruan belum berhasil.'); }).finally(() => { if (active) setLoading(false); });
+    }).catch(cause => { if (active) setError(cause instanceof Error ? cause.message : 'The update could not be completed.'); }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [revision, selectedDate]);
   return { workers, windows, sources, recordings, noiseReadings, noiseUnavailableReason, lastSynced, error, loading, refresh };

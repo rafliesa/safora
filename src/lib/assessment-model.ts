@@ -127,9 +127,9 @@ export function noiseDailyDoses(readings: NoiseReading[]): NoiseDailyDose[] {
   return days.map(date => {
     const entries = personal.filter(reading => localDate(new Date(reading.start_at)) === date);
     const profiles = new Set(entries.map(reading => reading.profile ? `${reading.profile.id}:${reading.profile.version}` : 'missing'));
-    const reason = overlaps(entries) ? 'Interval personal bertumpang tindih; dosis gabungan belum tersedia.'
-      : profiles.size !== 1 || profiles.has('missing') ? 'Profil perhitungan personal belum lengkap atau berbeda.'
-        : entries.some(reading => reading.level_dba === null || reading.dose_contribution_pct === null) ? 'Nilai pembacaan atau kontribusi dosis belum tersedia.' : null;
+    const reason = overlaps(entries) ? 'Personal measurement intervals overlap; a combined dose is unavailable.'
+      : profiles.size !== 1 || profiles.has('missing') ? 'Personal dose profiles are incomplete or incompatible.'
+        : entries.some(reading => reading.level_dba === null || reading.dose_contribution_pct === null) ? 'A measurement value or dose contribution is unavailable.' : null;
     return { date, pct: reason ? null : entries.reduce((sum, reading) => sum + reading.dose_contribution_pct!, 0), covered_s: unionSeconds(entries), reason };
   });
 }
@@ -183,7 +183,7 @@ export function buildEmployeeSnapshot(input: { worker: Worker; windows: Observat
     const previous = findings.get(key);
     if (previous) previous.duration_s += window.flagged_s;
     else findings.set(key, { region: window.msd?.body_region || null, activity: window.msd?.activity || null,
-      rationale: window.msd?.rationale || window.finding || 'Bagian tubuh, aktivitas, dan alasan penilaian belum tersedia.', duration_s: window.flagged_s });
+      rationale: window.msd?.rationale || window.finding || 'Body region, activity, and assessment rationale are unavailable.', duration_s: window.flagged_s });
   }
   const spans = [...new Set(windows.map(window => window.recording_id))].map(recordingId => {
     const entries = windows.filter(window => window.recording_id === recordingId);
@@ -201,13 +201,13 @@ export function buildEmployeeSnapshot(input: { worker: Worker; windows: Observat
   for (const recordingId of new Set(windows.map(window => window.recording_id))) {
     const entries = windows.filter(window => window.recording_id === recordingId);
     const events = [...new Map(entries.flatMap(window => window.msd?.episodes || []).map(episode => [episode.id, episode])).values()];
-    if (events.length) for (const event of events.slice(0, 3)) addEvidence(recordingId, event.id, event.start_s, event.end_s, 'msd', event.kind === 'static_hold' ? 'Holding time yang teramati' : 'Episode aktivitas terflag', entries[0].observed_at);
-    else { const first = entries.find(window => window.flagged_s > 0) || entries[0]; addEvidence(recordingId, `evidence-${first.id}`, first.start_s, first.end_s, 'msd', first.finding || 'Interval observasi postur', first.observed_at); }
+    if (events.length) for (const event of events.slice(0, 3)) addEvidence(recordingId, event.id, event.start_s, event.end_s, 'msd', event.kind === 'static_hold' ? 'Observed holding time' : 'Flagged activity episode', entries[0].observed_at);
+    else { const first = entries.find(window => window.flagged_s > 0) || entries[0]; addEvidence(recordingId, `evidence-${first.id}`, first.start_s, first.end_s, 'msd', first.finding || 'Posture observation interval', first.observed_at); }
   }
   for (const reading of noise) {
     const recording = recordings.find(item => item.id === reading.recording_id);
     const start = recording ? Math.max(0, (new Date(reading.start_at).getTime() - new Date(recording.recorded_at).getTime()) / 1000) : 0;
-    addEvidence(reading.recording_id, reading.id, start, start + (new Date(reading.end_at).getTime() - new Date(reading.start_at).getTime()) / 1000, 'noise', `Pembacaan ${reading.scope === 'personal' ? 'personal' : 'area'} · Simulasi`, reading.start_at);
+    addEvidence(reading.recording_id, reading.id, start, start + (new Date(reading.end_at).getTime() - new Date(reading.start_at).getTime()) / 1000, 'noise', `Reading ${reading.scope === 'personal' ? 'personal' : 'area'} · Simulated`, reading.start_at);
   }
   const primaryNoise = [...noise].sort((a, b) => b.status_priority - a.status_priority || b.start_at.localeCompare(a.start_at))[0];
   const updated = [...windows.map(window => window.updated_at || new Date(new Date(window.observed_at).getTime() + (window.end_s - window.start_s) * 1000).toISOString()), ...noise.map(reading => reading.updated_at)].sort();
@@ -231,9 +231,9 @@ export function buildEmployeeSnapshot(input: { worker: Worker; windows: Observat
       input_context: [...new Map(windows.flatMap(window => window.msd?.input_context || []).map(field => [field.field + field.value, field])).values()],
     },
     noise: {
-      readings: noise, status: primaryNoise?.assessment_status || 'Data pengukuran belum tersedia',
-      finding: primaryNoise?.finding || 'Belum ada pembacaan kebisingan untuk pegawai dan periode ini.',
-      rationale: primaryNoise?.rationale || 'Nilai dBA, interval pengukuran, cakupan personal/area, dan profil perlu disediakan.',
+      readings: noise, status: primaryNoise?.assessment_status || 'Measurement data unavailable',
+      finding: primaryNoise?.finding || 'No noise readings are available for this employee and period.',
+      rationale: primaryNoise?.rationale || 'Noise levels in dBA, measurement intervals, personal or area coverage, and the calculation profile are required.',
       levels: [...new Set(noise.flatMap(reading => reading.level_dba === null ? [] : [reading.level_dba]))].sort((a, b) => a - b),
       covered_s: unionSeconds(noise), personal_s: unionSeconds(noise.filter(reading => reading.scope === 'personal')),
       area_s: unionSeconds(noise.filter(reading => reading.scope === 'area')),

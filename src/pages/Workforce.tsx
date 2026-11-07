@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, ArrowUpRight, CalendarDays, Camera, ChevronDown, ClipboardCheck, Clock3, Filter, Layers3, Search, ShieldCheck, Sparkles, TrendingUp, Users, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, CalendarDays, ChevronDown, ClipboardCheck, Clock3, Filter, Search, ShieldCheck, Sparkles, TrendingUp, Users, X } from 'lucide-react';
 import { Badge, EmptyState, MetricCard, PageTitle, PeriodTabs, SectionTitle } from '../components/UI';
 import ExposureChart from '../components/ExposureChart';
 import { dateRange, risk } from '../lib/utils';
@@ -34,7 +34,7 @@ interface WorkforceProps extends PeriodProps {
 
 export function PeriodControls({ period, setPeriod, date, setDate }: PeriodProps) {
   return <>
-    <label className="date-filter"><CalendarDays size={15} /><input aria-label="Tanggal akhir rekap" type="date" value={date} onChange={event => { if (event.target.value) setDate(event.target.value); }} /></label>
+    <label className="date-filter"><CalendarDays size={15} /><input aria-label="Summary end date" type="date" value={date} onChange={event => { if (event.target.value) setDate(event.target.value); }} /></label>
     <PeriodTabs value={period} onChange={setPeriod} />
   </>;
 }
@@ -61,28 +61,26 @@ export function CompanyDashboard(props: WorkforceProps) {
   const high = observed.filter(worker => (worker.peak_reba || 0) >= 8);
   const usable = selected.reduce((sum, window) => sum + window.usable_s, 0);
   return <>
-    <PageTitle eyebrow="DASHBOARD PERUSAHAAN" title="Gambaran Kesehatan Kerja" description="Hasil analisis berkala seluruh pegawai, dalam satu pandangan." actions={<PeriodControls {...props} />} />
+    <PageTitle title="Workplace Health Overview" actions={<PeriodControls {...props} />} />
     <div className="metrics-grid">
-      <MetricCard label="Pegawai teramati" value={observed.length} unit="Pegawai" detail={`${workers.length} identitas tersedia`} icon={Users} />
-      <MetricCard label="Pegawai perlu review" value={pending.length} unit="Pegawai" detail="Temuan AI yang perlu ditinjau HSE" icon={ClipboardCheck} danger />
-      <MetricCard label="Risiko tinggi pada periode" value={high.length} unit="Pegawai" detail="REBA tertinggi ≥ 8 · termasuk belum direview" icon={ShieldCheck} />
-      <MetricCard label="Observasi usable pegawai" value={observationMinutes(usable)} unit="Menit" detail="Waktu teramati, bukan durasi shift" icon={Clock3} accent />
+      <MetricCard label="Employees observed" value={observed.length} unit="Employees" detail={`${workers.length} identities available`} icon={Users} />
+      <MetricCard label="Employees needing review" value={pending.length} unit="Employees" detail="AI findings requiring HSE review" icon={ClipboardCheck} danger />
+      <MetricCard label="High risk this period" value={high.length} unit="Employees" detail="Peak REBA ≥ 8 · includes unreviewed results" icon={ShieldCheck} />
+      <MetricCard label="Valid employee observation" value={observationMinutes(usable)} unit="Min" detail="Observed time, not scheduled shift duration" icon={Clock3} accent />
     </div>
     <div className="workforce-overview-grid">
       <section className="panel workforce-trend-panel">
-        <SectionTitle aside={<Badge tone={example ? 'demo' : 'neutral'}>{example ? 'Data contoh' : 'Hasil AI · kumulatif'}</Badge>}>Tren Paparan Perusahaan</SectionTitle>
-        <div className="workforce-chart-heading"><div><strong>{selected.length ? selected.reduce((sum, window) => sum + (window.exposure_points || 0), 0).toFixed(1) : '—'}<span>poin RAISE</span></strong><p>{formatDate(range.from)}–{formatDate(range.to, { year: 'numeric' })} · {selected.length} interval observasi</p></div><TrendingUp size={22} /></div>
+        <SectionTitle aside={<Badge tone={example ? 'demo' : 'neutral'}>{example ? 'Demo data' : 'Cumulative AI results'}</Badge>}>Company Exposure Trend</SectionTitle>
+        <div className="workforce-chart-heading"><div><strong>{selected.length ? selected.reduce((sum, window) => sum + (window.exposure_points || 0), 0).toFixed(1) : '—'}<span>RAISE points</span></strong><p>{formatDate(range.from)}–{formatDate(range.to, { year: 'numeric' })} · {selected.length} observation intervals</p></div><TrendingUp size={22} /></div>
         <ExposureChart windows={selected} {...range} />
       </section>
       <section className="panel review-queue-panel">
-        <SectionTitle aside={<span className="count-pill">{pending.length}</span>}>Prioritas Review HSE</SectionTitle>
-        <p className="workforce-helper">Hasil AI langsung masuk ke dashboard. Pegawai dengan temuan ditandai untuk peninjauan.</p>
-        {pending.length ? <div className="review-queue">{pending.slice(0, 4).map(summary => <a key={summary.worker.id} href={`#/employees/${summary.worker.id}`}><WorkerAvatar worker={summary.worker} /><div><strong>{summary.worker.name}</strong><span>{summary.worker.department} · REBA tertinggi {summary.peak_reba}</span></div><ArrowUpRight size={16} /></a>)}</div> : <EmptyState icon={ClipboardCheck} title="Belum ada antrean review" description={selected.length ? 'Belum ada flag review pada periode ini.' : 'Antrean muncul setelah hasil observasi tersedia.'} compact />}
-        <a className="button button-dark full-width" href="#/employees?review=needed">Buka dashboard pegawai<ArrowRight size={15} /></a>
+        <SectionTitle aside={<span className="count-pill">{pending.length}</span>}>HSE Review Priorities</SectionTitle>
+        {pending.length ? <div className="review-queue">{pending.slice(0, 4).map(summary => <a key={summary.worker.id} href={`#/employees/${summary.worker.id}`}><WorkerAvatar worker={summary.worker} /><div><strong>{summary.worker.name}</strong><span>{summary.worker.department} · Peak REBA {summary.peak_reba}</span></div><ArrowUpRight size={16} /></a>)}</div> : <EmptyState icon={ClipboardCheck} title="No reviews in the queue" description={selected.length ? 'No review flags for this period.' : 'The queue appears when observation results are available.'} compact />}
+        <a className="button button-dark full-width" href="#/employees?review=needed">Open employee dashboard<ArrowRight size={15} /></a>
       </section>
     </div>
-    <section className="panel automatic-flow-panel"><SectionTitle aside={<Badge tone="lime">Tiap 1 menit</Badge>}>Analisis Berjalan Otomatis</SectionTitle><div className="automatic-flow">{[{ icon: Camera, title: 'Kamera menyala', text: 'Sumber terhubung ke layanan' }, { icon: Users, title: 'Label per rekaman', text: 'Pegawai ditentukan manual' }, { icon: Layers3, title: 'Hasil terakumulasi', text: 'Interval baru menambah rekap' }, { icon: ClipboardCheck, title: 'Review saat diperlukan', text: 'HSE meninjau temuan pegawai' }].map(({ icon: Icon, title, text }, index) => <div key={title}><span><Icon size={21} strokeWidth={1.5} /></span><div><strong>{title}</strong><p>{text}</p></div>{index < 3 && <ArrowRight size={14} />}</div>)}</div></section>
-    <section className="panel workforce-recent"><SectionTitle aside={<a href="#/employees" className="text-link">Semua pegawai<ArrowRight size={14} /></a>}>Ringkasan Pegawai</SectionTitle>{summaries.length ? <WorkerTable summaries={summaries.slice(0, 5)} /> : <EmptyState icon={Users} title="Menunggu observasi pertama" description="Identitas dihubungkan ke rekaman secara manual. Rekap pegawai akan terisi otomatis saat hasil AI tersedia." action={<button className="button button-lime" onClick={onExample}><Sparkles size={16} />Jelajahi contoh dashboard</button>} />}</section>
+    <section className="panel workforce-recent"><SectionTitle aside={<a href="#/employees" className="text-link">All employees<ArrowRight size={14} /></a>}>Employee Summaries</SectionTitle>{summaries.length ? <WorkerTable summaries={summaries.slice(0, 5)} /> : <EmptyState icon={Users} title="Waiting for the first observation" description="Label employees in a recording to see their results." action={<button className="button button-lime" onClick={onExample}><Sparkles size={16} />Explore the demo dashboard</button>} />}</section>
   </>;
 }
 
@@ -99,11 +97,10 @@ export function EmployeeDirectory(props: WorkforceProps & { reviewOnly?: boolean
   const departments = [...new Set(workers.map(worker => worker.department))];
   const visible = summaries.filter(summary => `${summary.worker.id} ${summary.worker.name}`.toLowerCase().includes(search.toLowerCase()) && (department === 'all' || summary.worker.department === department) && (reviewFilter === 'all' || (reviewFilter === 'needed' ? summary.needs_review : !summary.needs_review))).sort((a, b) => Number(b.needs_review) - Number(a.needs_review) || a.worker.name.localeCompare(b.worker.name));
   return <>
-    <PageTitle eyebrow="DASHBOARD PEGAWAI" title="Setiap Pegawai, Lebih Dipahami" description="Rekap per orang dari berbagai kamera dan rekaman. Telusuri hasil dan riwayatnya." actions={<PeriodControls {...props} />} />
-    <div className="employee-directory-summary"><span><Users size={17} /><strong>{workers.length}</strong> pegawai</span><span><ClipboardCheck size={16} /><strong>{pending}</strong> perlu review HSE</span><span><Clock3 size={16} />Pembaruan hasil tiap 1 menit</span></div>
-    <div className="employee-filters"><div className="search-field"><Search size={17} /><input aria-label="Cari pegawai" placeholder="Cari nama atau ID pegawai…" value={search} onChange={event => setSearch(event.target.value)} />{search && <button aria-label="Hapus pencarian pegawai" onClick={() => setSearch('')}><X size={15} /></button>}</div><label className="filter-select"><Users size={14} /><select aria-label="Filter departemen" value={department} onChange={event => setDepartment(event.target.value)}><option value="all">Semua departemen</option>{departments.map(value => <option key={value}>{value}</option>)}</select><ChevronDown size={13} /></label><label className="filter-select"><Filter size={14} /><select aria-label="Filter review pegawai" value={reviewFilter} onChange={event => setReviewFilter(event.target.value)}><option value="all">Semua pegawai</option><option value="needed">Perlu review</option><option value="other">Tanpa flag review</option></select><ChevronDown size={13} /></label></div>
-    {visible.length ? <div className="employee-grid">{visible.map(summary => <EmployeeCard key={summary.worker.id} summary={summary} />)}</div> : <section className="panel"><EmptyState icon={search || department !== 'all' || reviewFilter !== 'all' ? Search : Users} title={workers.length ? 'Tidak ada pegawai yang cocok' : 'Belum ada data pegawai'} description={workers.length ? 'Ubah kata kunci atau filter untuk melihat pegawai lainnya.' : 'Label manual pada rekaman menentukan pegawai yang dinilai. Hasil berkala akan muncul di halaman ini.'} action={!workers.length && <button className="button button-lime" onClick={onExample}><Sparkles size={16} />Lihat contoh daftar pegawai</button>} /></section>}
-    <div className="hub-bottom"><p><ShieldCheck size={15} />Identitas mengikuti label rekaman, bukan kepemilikan kamera.</p><a href="#/cameras/archive" className="text-link">Buka arsip rekaman<ArrowRight size={14} /></a></div>
+    <PageTitle title="Employees" actions={<PeriodControls {...props} />} />
+    <div className="employee-directory-summary"><span><Users size={17} /><strong>{workers.length}</strong> employees</span><span><ClipboardCheck size={16} /><strong>{pending}</strong> need HSE review</span></div>
+    <div className="employee-filters"><div className="search-field"><Search size={17} /><input aria-label="Search employees" placeholder="Search by employee name or ID…" value={search} onChange={event => setSearch(event.target.value)} />{search && <button aria-label="Clear employee search" onClick={() => setSearch('')}><X size={15} /></button>}</div><label className="filter-select"><Users size={14} /><select aria-label="Filter by department" value={department} onChange={event => setDepartment(event.target.value)}><option value="all">All departments</option>{departments.map(value => <option key={value}>{value}</option>)}</select><ChevronDown size={13} /></label><label className="filter-select"><Filter size={14} /><select aria-label="Filter by employee review" value={reviewFilter} onChange={event => setReviewFilter(event.target.value)}><option value="all">All employees</option><option value="needed">Needs review</option><option value="other">No review flag</option></select><ChevronDown size={13} /></label></div>
+    {visible.length ? <div className="employee-grid">{visible.map(summary => <EmployeeCard key={summary.worker.id} summary={summary} />)}</div> : <section className="panel"><EmptyState icon={search || department !== 'all' || reviewFilter !== 'all' ? Search : Users} title={workers.length ? 'No matching employees' : 'No employee data yet'} description={workers.length ? 'Change your search or filters to see other employees.' : 'Add employee labels to a recording.'} action={!workers.length && <button className="button button-lime" onClick={onExample}><Sparkles size={16} />View the demo employee directory</button>} /></section>}
   </>;
 }
 
@@ -115,21 +112,32 @@ function WorkerAvatar({ worker, large = false }: { worker: Worker; large?: boole
 function EmployeeCard({ summary }: { summary: WorkerSummary & { assessment?: EmployeeAssessmentSnapshot; localReview?: LocalHseReview | null } }) {
   const { worker, assessment, localReview } = summary;
   const band = risk(summary.peak_reba);
-  const recommendation = assessment ? [...assessment.msd.interventions, ...assessment.noise.interventions].sort((a, b) => a.priority.localeCompare(b.priority))[0] : null;
-  const reviewText = localReview?.status === 'reviewed' ? 'Sudah direview HSE' : localReview?.status === 'needs_evidence' ? 'Perlu bukti' : 'Belum direview';
-  return <article className={`employee-card ${summary.needs_review ? 'employee-card-review' : ''}`}>
-    <div className="employee-card-top"><WorkerAvatar worker={worker} /><Badge tone={summary.needs_review ? 'warning' : 'neutral'} dot>{summary.needs_review ? 'Perlu review' : 'Tanpa flag'}</Badge></div>
-    <h2>{worker.name}</h2><p className="employee-card-id">{worker.id}<span>·</span>{worker.department}</p>
-    {assessment && <p className="employee-card-period"><CalendarDays size={13} />{formatDate(assessment.scope.from)}–{formatDate(assessment.scope.to)}</p>}
-    <div className="employee-card-measures"><div><span>MSD · REBA tertinggi</span><strong className={`score-${band.tone}`}>{summary.peak_reba ?? '—'}<small>/15</small></strong><Badge tone={band.tone}>{assessment?.msd.band || 'Belum dinilai'}</Badge></div><div><span>Paparan RAISE</span><strong>{summary.has_points ? summary.exposure_points.toFixed(1) : '—'}<small>poin</small></strong><small>Metrik prototipe</small></div></div>
-    {assessment && <div className="employee-card-module-status"><span>Kebisingan</span><strong>{assessment.noise.status}</strong><Badge tone="demo">Simulasi</Badge></div>}
-    {recommendation && <div className="employee-card-recommendation"><Badge tone={recommendation.priority === 'P1' ? 'danger' : recommendation.priority === 'P2' ? 'warning' : 'neutral'}>Prioritas {recommendation.priority}</Badge><p>{recommendation.action}</p></div>}
-    <div className="employee-card-coverage"><Clock3 size={13} /><span>{observationMinutes(summary.usable_s)} menit valid</span><span>{summary.recordings} rekaman</span></div>
-    <div className="employee-card-review-meta"><Badge tone={localReview?.status === 'reviewed' ? 'success' : localReview?.status === 'needs_evidence' ? 'warning' : 'neutral'}>{reviewText}</Badge><small>{assessment?.updated_at ? formatDate(assessment.updated_at, { hour: '2-digit', minute: '2-digit' }) + ' WIB' : 'Pembaruan belum tersedia'}</small></div>
-    <a href={`#/employees/${worker.id}`} className="button button-muted full-width">Lihat detail pegawai<ArrowUpRight size={15} /></a>
+  const reviewText = localReview?.status === 'reviewed' ? 'Reviewed' : localReview?.status === 'needs_evidence' ? 'Evidence needed' : summary.needs_review ? 'Needs review' : 'Not reviewed';
+  const reviewTone = localReview?.status === 'reviewed' ? 'success' : summary.needs_review ? 'warning' : 'neutral';
+  const noiseStatus = assessment?.noise.status || 'Measurement data unavailable';
+  const shortNoiseStatus: Record<string, string> = {
+    'Partial coverage, HSE review needed': 'Partial coverage',
+    'Area coverage · personal assessment needed': 'Area reading',
+    'Measurement data unavailable': 'No measurement',
+    'Measurement value unavailable': 'Value unavailable',
+    'Exposure criterion reached': 'Criterion reached',
+  };
+  return <article className={'employee-card employee-card-compact' + (summary.needs_review ? ' employee-card-review' : '')}>
+    <div className="employee-card-identity">
+      <WorkerAvatar worker={worker} />
+      <div><h2>{worker.name}</h2><p>{worker.id} · {worker.department}</p></div>
+    </div>
+    <div className="employee-card-signals">
+      <div><span>MSD · REBA</span><div><strong>{summary.peak_reba ?? '—'}<small>/15</small></strong><Badge tone={band.tone}>{assessment?.msd.band || 'Not assessed'}</Badge></div></div>
+      <div><span>Noise <small>Simulated</small></span><strong title={noiseStatus}>{shortNoiseStatus[noiseStatus] || noiseStatus}</strong></div>
+    </div>
+    <div className="employee-card-footer">
+      <Badge tone={reviewTone} dot>{reviewText}</Badge>
+      <a href={'#/employees/' + worker.id} className="text-link" aria-label="View employee details">View details<ArrowUpRight size={15} /></a>
+    </div>
   </article>;
 }
 
 function WorkerTable({ summaries }: { summaries: WorkerSummary[] }) {
-  return <div className="table-scroll"><table className="session-table"><thead><tr><th>Pegawai</th><th>Departemen</th><th>Observasi usable</th><th>REBA tertinggi</th><th>Review HSE</th><th>Detail</th></tr></thead><tbody>{summaries.map(summary => <tr key={summary.worker.id}><td><div className="table-worker"><WorkerAvatar worker={summary.worker} /><div><strong>{summary.worker.name}</strong><small>{summary.worker.id}</small></div></div></td><td>{summary.worker.department}</td><td>{observationMinutes(summary.usable_s)} menit</td><td><Badge tone={risk(summary.peak_reba).tone}>{summary.peak_reba ?? '—'} · {risk(summary.peak_reba).label}</Badge></td><td><Badge tone={summary.needs_review ? 'warning' : 'neutral'}>{summary.needs_review ? 'Perlu review' : 'Tanpa flag'}</Badge></td><td><a className="text-link" href={`#/employees/${summary.worker.id}`}>Lihat detail<ArrowUpRight size={14} /></a></td></tr>)}</tbody></table></div>;
+  return <div className="table-scroll"><table className="session-table"><thead><tr><th>Employees</th><th>Department</th><th>Valid observation</th><th>Peak REBA</th><th>HSE review</th><th>Detail</th></tr></thead><tbody>{summaries.map(summary => <tr key={summary.worker.id}><td><div className="table-worker"><WorkerAvatar worker={summary.worker} /><div><strong>{summary.worker.name}</strong><small>{summary.worker.id}</small></div></div></td><td>{summary.worker.department}</td><td>{observationMinutes(summary.usable_s)} min</td><td><Badge tone={risk(summary.peak_reba).tone}>{summary.peak_reba ?? '—'} · {risk(summary.peak_reba).label}</Badge></td><td><Badge tone={summary.needs_review ? 'warning' : 'neutral'}>{summary.needs_review ? 'Needs review' : 'No flags'}</Badge></td><td><a className="text-link" href={`#/employees/${summary.worker.id}`}>View details<ArrowUpRight size={14} /></a></td></tr>)}</tbody></table></div>;
 }

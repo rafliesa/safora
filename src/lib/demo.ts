@@ -20,7 +20,7 @@ function dayAgo(days: number): string {
 }
 
 function label(worker: Worker, index = 0): ManualLabel {
-  return { worker_id: worker.id, worker_name: worker.name, subject_label: index === 0 ? 'Subjek 1 · sisi kiri' : 'Subjek 2 · sisi kanan', start_s: 0, end_s: 2400, origin: 'manual' };
+  return { worker_id: worker.id, worker_name: worker.name, subject_label: index === 0 ? 'Subject 1 · left side' : 'Subject 2 · right side', start_s: 0, end_s: 2400, origin: 'manual' };
 }
 
 // Requested hardcoded archive metadata. No fake file URLs or live camera status.
@@ -33,7 +33,7 @@ export const exampleRecordings: Recording[] = Array.from({ length: 12 }, (_, ind
   return {
     id: `archive-${index + 1}`, camera_id: camera,
     station_id: ['B-12', 'O-04', 'S-08', 'D-02'][index % 4],
-    title: `Observasi workstation · Kamera ${camera}`,
+    title: `Workstation observation · Camera ${camera}`,
     filename: `CAM-${camera}_${date}_${hour.replace(':', '')}.mp4`,
     recorded_at: `${date}T${hour}:00+07:00`, duration_s: 2400, source: 'example',
     labels: index % 3 === 0 ? [label(worker), label(second, 1)] : [label(worker)],
@@ -49,7 +49,7 @@ for (let index = 0; index < 4; index++) {
   exampleRecordings.push({
     id: `sample-today-${camera}`, camera_id: camera,
     station_id: ['B-12', 'O-04', 'S-08', 'D-02'][index],
-    title: `Observasi harian · Kamera ${camera}`,
+    title: `Daily observation · Camera ${camera}`,
     filename: `CAM-${camera}_${date}_${hour.replace(':', '')}.mp4`,
     recorded_at: `${date}T${hour}:00+07:00`, duration_s: 2400, source: 'example',
     labels: [label(exampleWorkers[index * 2]), label(exampleWorkers[index * 2 + 1], 1)],
@@ -65,14 +65,14 @@ interface DisplayProfile {
   priority: 'P1' | 'P2' | 'P3';
 }
 const displayProfiles: DisplayProfile[] = [
-  { tableC: 5, activityAdjustment: 0, validMinutes: 30, holds: 8, holdSeconds: 45, dynamicEvents: 6, dynamicSeconds: 60, region: 'Punggung bawah', activity: 'Membungkuk saat menjangkau material', rationale: 'Postur membungkuk berulang pada tugas menjangkau material menjadi dasar penilaian REBA pada fixture ini.', action: 'Dekatkan material dan sesuaikan tinggi area kerja untuk mengurangi membungkuk.', actionReason: 'Menangani postur punggung bawah dan durasi membungkuk yang terlihat pada rekaman.', priority: 'P2' },
-  { tableC: 8, activityAdjustment: 1, validMinutes: 33, holds: 6, holdSeconds: 75, dynamicEvents: 5, dynamicSeconds: 60, region: 'Bahu dan lengan atas', activity: 'Menjangkau rak dengan lengan terangkat', rationale: 'Elevasi lengan dan jangkauan berulang memerlukan perbaikan susunan material dan peninjauan HSE.', action: 'Turunkan posisi rak yang sering digunakan dan sediakan tumpuan lengan yang sesuai.', actionReason: 'Mengurangi kebutuhan menjangkau di atas bahu selama aktivitas yang dinilai.', priority: 'P1' },
-  { tableC: 10, activityAdjustment: 2, validMinutes: 28, holds: 4, holdSeconds: 90, dynamicEvents: 8, dynamicSeconds: 60, region: 'Punggung bawah dan tungkai', activity: 'Membungkuk dalam saat memindahkan material', rationale: 'Fase pemindahan pada fixture memiliki postur membungkuk dalam dan penyesuaian aktivitas yang perlu ditinjau segera.', action: 'Tinjau metode pemindahan dan alat bantu sesuai prosedur tindakan segera di lokasi.', actionReason: 'REBA fixture 12 memerlukan konfirmasi HSE dan penanganan tugas yang diprioritaskan.', priority: 'P1' },
-  { tableC: 2, activityAdjustment: 0, validMinutes: 38, holds: 0, holdSeconds: 0, dynamicEvents: 0, dynamicSeconds: 0, region: 'Bahu dan punggung', activity: 'Perakitan dengan jangkauan dekat', rationale: 'Postur yang dinilai pada fixture memiliki jangkauan dekat; tidak ada episode terflag dalam interval valid.', action: 'Pertahankan jangkauan dekat dan jadwalkan observasi ulang saat tugas berubah.', actionReason: 'Mempertahankan pengaturan tugas yang teramati dan mendeteksi perubahan pola kerja.', priority: 'P3' },
-  { tableC: 3, activityAdjustment: 0, validMinutes: 35, holds: 4, holdSeconds: 30, dynamicEvents: 2, dynamicSeconds: 30, region: 'Leher', activity: 'Menunduk singkat saat inspeksi', rationale: 'Episode menunduk singkat tercatat saat inspeksi; penilaian tetap perlu dibaca bersama cakupan dan konteks tugas.', action: 'Posisikan objek inspeksi agar lebih mudah dilihat tanpa menunduk berulang.', actionReason: 'Menangani aktivitas leher yang ditandai dalam interval observasi.', priority: 'P3' },
-  { tableC: 6, activityAdjustment: 0, validMinutes: 32, holds: 6, holdSeconds: 60, dynamicEvents: 4, dynamicSeconds: 45, region: 'Pergelangan dan lengan bawah', activity: 'Menjangkau perangkat input berulang', rationale: 'Posisi pergelangan dan jangkauan berulang pada fixture mendasari kebutuhan perbaikan pengaturan perangkat.', action: 'Dekatkan perangkat input dan atur tumpuan lengan sesuai tugas.', actionReason: 'Mengurangi jangkauan berulang dan mempertahankan posisi pergelangan yang lebih sesuai.', priority: 'P2' },
-  { tableC: 4, activityAdjustment: 0, validMinutes: 30, holds: 5, holdSeconds: 40, dynamicEvents: 3, dynamicSeconds: 40, region: 'Punggung atas', activity: 'Menahan posisi saat inspeksi', rationale: 'Posisi statis dan episode punggung atas pada fixture perlu ditinjau bersama durasi serta dukungan tubuh.', action: 'Sesuaikan posisi objek inspeksi dan sediakan dukungan tubuh yang sesuai.', actionReason: 'Menangani durasi posisi statis yang berulang pada tugas inspeksi.', priority: 'P2' },
-  { tableC: 1, activityAdjustment: 0, validMinutes: 37, holds: 0, holdSeconds: 0, dynamicEvents: 0, dynamicSeconds: 0, region: 'Punggung dan lengan', activity: 'Pekerjaan meja dengan dukungan', rationale: 'Tidak ada episode terflag pada fixture ini; cakupan tetap terbatas pada rekaman yang dinilai.', action: 'Pertahankan pengaturan kerja dan ulangi observasi jika aktivitas berubah.', actionReason: 'Memantau perubahan paparan tanpa menyimpulkan kondisi di luar waktu yang diamati.', priority: 'P3' },
+  { tableC: 5, activityAdjustment: 0, validMinutes: 30, holds: 8, holdSeconds: 45, dynamicEvents: 6, dynamicSeconds: 60, region: 'Lower back', activity: 'Bending to reach materials', rationale: 'Repeated bending while reaching for materials informs the REBA assessment in this demo.', action: 'Move materials closer and adjust the work surface height to reduce bending.', actionReason: 'Addresses lower-back posture and bending duration observed in the recording.', priority: 'P2' },
+  { tableC: 8, activityAdjustment: 1, validMinutes: 33, holds: 6, holdSeconds: 75, dynamicEvents: 5, dynamicSeconds: 60, region: 'Shoulder and upper arm', activity: 'Reaching for shelves with raised arms', rationale: 'Raised arms and repeated reaching call for changes to material placement and HSE review.', action: 'Lower frequently used shelves and provide suitable arm support.', actionReason: 'Reduces the need to reach above shoulder level during the assessed task.', priority: 'P1' },
+  { tableC: 10, activityAdjustment: 2, validMinutes: 28, holds: 4, holdSeconds: 90, dynamicEvents: 8, dynamicSeconds: 60, region: 'Lower back and legs', activity: 'Deep bending while moving materials', rationale: 'The demo transfer phase includes deep bending and activity adjustments requiring prompt review.', action: 'Review transfer methods and handling aids under the site’s immediate action procedures.', actionReason: 'The demo REBA score of 12 calls for HSE confirmation and prioritized task intervention.', priority: 'P1' },
+  { tableC: 2, activityAdjustment: 0, validMinutes: 38, holds: 0, holdSeconds: 0, dynamicEvents: 0, dynamicSeconds: 0, region: 'Shoulder and back', activity: 'Assembly within easy reach', rationale: 'The assessed demo posture uses a close reach; no episodes are flagged within valid intervals.', action: 'Keep materials within easy reach and schedule another observation when the task changes.', actionReason: 'Maintains the observed task setup and helps detect changes in work patterns.', priority: 'P3' },
+  { tableC: 3, activityAdjustment: 0, validMinutes: 35, holds: 4, holdSeconds: 30, dynamicEvents: 2, dynamicSeconds: 30, region: 'Neck', activity: 'Brief neck bending during inspection', rationale: 'Brief neck-bending episodes are recorded during inspection. Interpret the assessment alongside coverage and task context.', action: 'Reposition inspection items for a clear view without repeated neck bending.', actionReason: 'Addresses the neck activity flagged during observed intervals.', priority: 'P3' },
+  { tableC: 6, activityAdjustment: 0, validMinutes: 32, holds: 6, holdSeconds: 60, dynamicEvents: 4, dynamicSeconds: 45, region: 'Wrist and forearm', activity: 'Repeated reaching for input devices', rationale: 'Wrist position and repeated reaching in this demo indicate a need to improve device placement.', action: 'Bring input devices closer and adjust arm support to suit the task.', actionReason: 'Reduces repeated reaching and supports a more suitable wrist position.', priority: 'P2' },
+  { tableC: 4, activityAdjustment: 0, validMinutes: 30, holds: 5, holdSeconds: 40, dynamicEvents: 3, dynamicSeconds: 40, region: 'Upper back', activity: 'Holding a static posture during inspection', rationale: 'Static posture and upper-back episodes in this demo need review alongside duration and body support.', action: 'Adjust the inspection item position and provide suitable body support.', actionReason: 'Addresses repeated static posture during inspection tasks.', priority: 'P2' },
+  { tableC: 1, activityAdjustment: 0, validMinutes: 37, holds: 0, holdSeconds: 0, dynamicEvents: 0, dynamicSeconds: 0, region: 'Back and arms', activity: 'Supported desk work', rationale: 'No episodes are flagged in this demo. Coverage remains limited to the assessed recording.', action: 'Maintain the work setup and repeat observation when activities change.', actionReason: 'Monitors exposure changes within the observed periods.', priority: 'P3' },
 ];
 
 function episodesFor(recording: Recording, workerId: string, profile: DisplayProfile): MsdEpisode[] {
@@ -115,28 +115,28 @@ export const exampleWindows: ObservationWindow[] = exampleRecordings.flatMap((re
       start_s: start, end_s: end, usable_s: usable, flagged_s: flagged,
       reba_score: usable ? score : null, exposure_points: usable ? weight * (flagged + extra) / 60 : null,
       requires_review: flagged > 0, review_state: 'draft',
-      finding: usable ? `Paparan ${profile.region.toLowerCase()} · ${profile.activity.toLowerCase()}` : 'Unknown · interval tidak memenuhi kualitas pengamatan',
+      finding: usable ? `Exposure ${profile.region.toLowerCase()} · ${profile.activity.toLowerCase()}` : 'Unknown · interval does not meet observation quality requirements',
       source: 'example',
       msd: {
         body_region: profile.region, activity: profile.activity, rationale: profile.rationale,
         table_c: usable ? tableC : null, episodes: here, holding_tracking_available: true,
         interventions: [{ id: `msd-action-${workerIndex}`, action: profile.action, reason: profile.actionReason, priority: profile.priority }],
-        input_context: [{ field: 'Table C pada fixture', value: String(tableC) }, { field: 'Activity adjustment pada fixture', value: String(profile.activityAdjustment) }, { field: 'Load / force, coupling, dan support', value: null }, { field: 'Detail lookup Table A / B', value: null }],
+        input_context: [{ field: 'Demo Table C', value: String(tableC) }, { field: 'Demo activity adjustment', value: String(profile.activityAdjustment) }, { field: 'Load / force, coupling, and support', value: null }, { field: 'Table A / B lookup details', value: null }],
       },
     };
   });
 }));
 
-const noiseProfile: NoiseProfile = { id: 'example-85-3-v1', name: 'Profil contoh 85/3', criterion_dba: 85, exchange_rate_db: 3, reference_hours: 8, integration_threshold_dba: 80, version: 1 };
+const noiseProfile: NoiseProfile = { id: 'example-85-3-v1', name: 'Example 85/3 profile', criterion_dba: 85, exchange_rate_db: 3, reference_hours: 8, integration_threshold_dba: 80, version: 1 };
 const noiseFixtures = [
-  { level: 88, scope: 'personal', status: 'Cakupan parsial, perlu review HSE', rank: 2, finding: 'Paparan kebisingan personal pada interval yang terukur', reason: 'Pembacaan mencakup 40 menit. Data ini belum mewakili seluruh shift dan memerlukan review HSE.', priority: 'P2' },
-  { level: 91, scope: 'personal', status: 'Perlu review', rank: 3, finding: 'Paparan kebisingan personal saat pekerjaan operasional', reason: 'Kebisingan tercatat pada interval kerja; evaluasi sumber dan kelengkapan cakupan pengukuran diperlukan.', priority: 'P1' },
-  { level: 97, scope: 'personal', status: 'Kriteria paparan tercapai', rank: 4, finding: 'Kontribusi dosis pada fixture mencapai kriteria profil contoh', reason: 'Fixture personal 97 dBA selama 40 menit memiliki kontribusi 133,3% menurut profil contoh 85/3. Status ini berasal dari data mock.', priority: 'P1' },
-  { level: 82, scope: 'area', status: 'Cakupan area · asesmen personal diperlukan', rank: 1, finding: 'Kebisingan area pada workstation yang teramati', reason: 'Pembacaan area memberi konteks lokasi. Pembacaan ini tidak menetapkan dosis personal pegawai.', priority: 'P2' },
-  { level: 84, scope: 'personal', status: 'Cakupan parsial', rank: 1, finding: 'Pembacaan personal tersedia untuk sebagian waktu kerja', reason: 'Cakupan pengukuran terbatas pada rekaman ini; tidak ada klaim untuk bagian shift yang belum diukur.', priority: 'P3' },
+  { level: 88, scope: 'personal', status: 'Partial coverage, HSE review needed', rank: 2, finding: 'Personal noise exposure during the measured interval', reason: 'The reading covers 40 minutes. It does not represent a full shift and requires HSE review.', priority: 'P2' },
+  { level: 91, scope: 'personal', status: 'Needs review', rank: 3, finding: 'Personal noise exposure during operational work', reason: 'Noise is recorded during the work interval. Review the source and completeness of measurement coverage.', priority: 'P1' },
+  { level: 97, scope: 'personal', status: 'Exposure criterion reached', rank: 4, finding: 'Demo dose contribution reaches the example profile criterion', reason: 'The simulated personal reading of 97 dBA over 40 minutes contributes 133.3% under the example 85/3 profile. This status comes from demo data.', priority: 'P1' },
+  { level: 82, scope: 'area', status: 'Area coverage · personal assessment needed', rank: 1, finding: 'Area noise at the observed workstation', reason: 'Area readings provide location context. They do not establish an employee’s personal dose.', priority: 'P2' },
+  { level: 84, scope: 'personal', status: 'Partial coverage', rank: 1, finding: 'Personal readings cover part of the work period', reason: 'Measurement coverage is limited to this recording. Unmeasured parts of the shift are not assessed.', priority: 'P3' },
   null,
-  { level: 91, scope: 'area', status: 'Perlu review', rank: 3, finding: 'Konteks kebisingan area memerlukan peninjauan', reason: 'Nilai berasal dari sensor area. Pengukuran personal dan peninjauan kontrol sumber masih diperlukan.', priority: 'P1' },
-  { level: null, scope: 'personal', status: 'Nilai pembacaan belum tersedia', rank: 1, finding: 'Interval instrumen tercatat tanpa nilai dBA', reason: 'Nilai pembacaan dan profil perhitungan belum tersedia, sehingga kontribusi dosis belum dapat ditampilkan.', priority: 'P2' },
+  { level: 91, scope: 'area', status: 'Needs review', rank: 3, finding: 'Area noise context requires review', reason: 'Values come from an area sensor. Personal measurement and a review of source controls are still required.', priority: 'P1' },
+  { level: null, scope: 'personal', status: 'Measurement value unavailable', rank: 1, finding: 'Instrument interval recorded without a dBA value', reason: 'The measurement value and calculation profile are unavailable, so dose contribution cannot be displayed.', priority: 'P2' },
 ] as const;
 
 export const exampleNoiseReadings: NoiseReading[] = exampleRecordings.flatMap(recording => recording.labels.flatMap(subject => {
@@ -158,8 +158,8 @@ export const exampleNoiseReadings: NoiseReading[] = exampleRecordings.flatMap(re
     assessment_status: fixture.status, status_priority: fixture.rank,
     finding: fixture.finding, rationale: fixture.reason,
     interventions: [{ id: `noise-action-${index}`,
-      action: fixture.scope === 'area' ? 'Lakukan pengukuran personal dan tinjau sumber kebisingan di workstation ini.' : 'Verifikasi pengukuran personal dan tinjau kontrol sumber kebisingan selama tugas terkait.',
-      reason: fixture.scope === 'area' ? 'Pembacaan area belum menggambarkan dosis personal pegawai.' : 'Menindaklanjuti paparan yang terukur dan melengkapi bagian periode yang belum tercakup.',
+      action: fixture.scope === 'area' ? 'Take personal measurements and review noise sources at this workstation.' : 'Verify personal measurements and review noise source controls during the relevant task.',
+      reason: fixture.scope === 'area' ? 'Area readings do not describe an employee’s personal dose.' : 'Follows up on measured exposure and fills gaps in measurement coverage.',
       priority: fixture.priority }],
     updated_at: new Date(new Date(recording.recorded_at).getTime() + covered * 1000).toISOString(),
   } satisfies NoiseReading];

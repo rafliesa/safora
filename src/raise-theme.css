@@ -30,7 +30,7 @@
   --gradient-brand: linear-gradient(90deg, #050404 0%, #243f57 45%, #47769e 100%);
   --gradient-title-marker: linear-gradient(180deg, #050404 0%, #47769e 100%);
   --font-ui: 'Poppins', 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --radius-shell: 28px;
+  --radius-shell: 0;
   --radius-card: 16px;
   --radius-control: 10px;
   --shadow-card: 0 4px 16px rgb(5 4 4 / 6%);
@@ -47,7 +47,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-body { padding: 48px; background: var(--color-canvas); }
+body { margin: 0; padding: 0; background: var(--color-canvas); }
+#root { width: 100%; min-height: 100vh; }
 button, input, select, textarea { font-family: var(--font-ui); font-size: 14px; }
 p, li { font-size: 14px; line-height: 1.6; }
 span, strong { font-size: inherit; }
@@ -63,9 +64,9 @@ input:focus, select:focus, textarea:focus { border-color: var(--color-brand); ou
 input::placeholder, textarea::placeholder { color: #718496; }
 input[type='checkbox'] { accent-color: var(--color-brand-deep); }
 button:disabled, .button:disabled { opacity: .5; }
-.app-shell { max-width: 1472px; border-radius: var(--radius-shell); border-color: #e1e7ec; min-height: calc(100vh - 96px); }
+.app-shell { width: 100%; max-width: none; margin: 0; border: 0; border-radius: var(--radius-shell); min-height: 100vh; }
 .app-body { padding: 30px 32px 32px; gap: 28px; grid-template-columns: 64px minmax(0, 1fr); }
-.app-header { min-height: 112px; height: auto; padding: 25px 32px; border-radius: 28px 28px 0 0; background: var(--gradient-brand); color: white; }
+.app-header { min-height: 112px; height: auto; padding: 25px 32px; border-radius: 0; background: var(--gradient-brand); color: white; }
 .header-left { gap: 16px; }
 .brand { min-width: 235px; height: 62px; padding: 4px 8px 4px 0; gap: 12px; border: 0; border-radius: 0; background: transparent; color: white; }
 .brand-symbol { width: 48px; height: 48px; border: 1px solid #9bbedc88; border-radius: 13px; background: #ffffff12; color: var(--color-highlight); }
@@ -502,13 +503,8 @@ button:disabled, .button:disabled { opacity: .5; }
 .not-found > span { font-size: 90px; color: var(--color-surface-blue); }
 .not-found h1 { font-size: 30px; color: var(--color-brand-deep); }
 .not-found p { font-size: 14px; color: var(--color-text-muted); }
-.secondary-measurement-context { margin-top: 24px; padding: 22px; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-surface-muted); }
-.secondary-measurement-context > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
-.secondary-measurement-context h2 { font-size: 17px; color: var(--color-brand-deep); }
-.secondary-measurement-context > section { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 
 @media (max-width: 1439px) {
-  body { padding: 32px; }
   .app-body { padding: 28px 28px 28px; gap: 24px; }
   .app-header { padding: 24px 28px; }
   .header-motto { display: none; }
@@ -527,8 +523,6 @@ button:disabled, .button:disabled { opacity: .5; }
 }
 
 @media (max-width: 1279px) {
-  body { padding: 24px; }
-  .app-shell { min-height: calc(100vh - 48px); }
   .app-header { gap: 16px; }
   .header-left > .header-tools { display: none; }
   .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -749,8 +743,6 @@ button:disabled, .button:disabled { opacity: .5; }
   .app-footer { padding: 14px 20px 24px; gap: 14px; }
   .app-footer, .app-footer strong, .app-footer > button, .app-footer > span { font-size: 11px; }
   .toast { bottom: 90px; }
-  .secondary-measurement-context { padding: 20px; }
-  .secondary-measurement-context > section { grid-template-columns: 1fr; gap: 20px; }
 }
 
 @media (max-width: 420px) {
@@ -779,5 +771,5 @@ button:disabled, .button:disabled { opacity: .5; }
   .exposure-card-header, .app-header, .badge { print-color-adjust: exact; }
   .employee-context-card, .assessment-coverage, .employee-hse-section { break-inside: avoid; }
   .employee-context-fields { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .employee-evidence-history, .secondary-measurement-context { break-inside: avoid; }
+  .employee-evidence-history { break-inside: avoid; }
 }

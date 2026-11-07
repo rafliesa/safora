@@ -18,12 +18,12 @@ export function writeLocalRecordings(recordings: Recording[]): void {
 }
 
 async function database(): Promise<IDBDatabase> {
-  if (!globalThis.indexedDB) throw new Error('Penyimpanan video lokal tidak tersedia di browser ini. Gunakan browser yang mendukung IndexedDB.');
+  if (!globalThis.indexedDB) throw new Error('Local video storage is unavailable in this browser. Use a browser that supports IndexedDB.');
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
     request.onupgradeneeded = () => { if (!request.result.objectStoreNames.contains('videos')) request.result.createObjectStore('videos'); };
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(new Error('Penyimpanan video lokal tidak dapat dibuka.'));
+    request.onerror = () => reject(new Error('Local video storage could not be opened.'));
   });
 }
 
@@ -34,8 +34,8 @@ export async function storeVideo(id: string, file: File): Promise<void> {
       const transaction = db.transaction('videos', 'readwrite');
       transaction.objectStore('videos').put(file, id);
       transaction.oncomplete = () => resolve();
-      transaction.onerror = () => reject(new Error('Video tidak tersimpan. Periksa ruang penyimpanan browser.'));
-      transaction.onabort = () => reject(new Error('Penyimpanan video dibatalkan.'));
+      transaction.onerror = () => reject(new Error('The video could not be saved. Check available browser storage.'));
+      transaction.onabort = () => reject(new Error('Video storage was cancelled.'));
     });
   } finally { db.close(); }
 }
@@ -46,7 +46,7 @@ export async function readVideo(id: string): Promise<Blob | null> {
     return await new Promise((resolve, reject) => {
       const request = db.transaction('videos', 'readonly').objectStore('videos').get(id);
       request.onsuccess = () => resolve(request.result instanceof Blob ? request.result : null);
-      request.onerror = () => reject(new Error('Rekaman lokal tidak dapat dibaca.'));
+      request.onerror = () => reject(new Error('The local recording could not be read.'));
     });
   } finally { db.close(); }
 }

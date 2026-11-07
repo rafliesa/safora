@@ -35,13 +35,13 @@ export function reviewForSnapshot(store: LocalReviewStore, snapshot: EmployeeAss
 }
 
 export function saveLocalReview(snapshot: EmployeeAssessmentSnapshot, current: EmployeeAssessmentSnapshot, input: { status: LocalReviewDecision; reviewer: string; notes: string }): LocalHseReview {
-  if (snapshot.scopeKey !== current.scopeKey) throw new Error('Snapshot berubah saat ditinjau. Buka ulang tinjauan untuk menggunakan data dan revisi terbaru.');
-  if (!input.reviewer.trim() || input.notes.trim().length < 5) throw new Error('Lengkapi identitas HSE dan catatan minimal 5 karakter.');
-  if (!snapshot.windows.length && !snapshot.noise.readings.length) throw new Error('Belum ada hasil yang dapat direview pada periode ini.');
+  if (snapshot.scopeKey !== current.scopeKey) throw new Error('The snapshot changed during review. Reopen the review to use the latest data and revision.');
+  if (!input.reviewer.trim() || input.notes.trim().length < 5) throw new Error('Enter the HSE reviewer name and a note of at least 5 characters.');
+  if (!snapshot.windows.length && !snapshot.noise.readings.length) throw new Error('There are no results to review for this period.');
   const review: LocalHseReview = { ...snapshot.scope, status: input.status, reviewer: input.reviewer.trim(), notes: input.notes.trim(), savedAt: new Date().toISOString(), storage: 'frontend_local' };
   const next = { ...readLocalReviews(), [snapshot.scopeKey]: review };
   try { window.localStorage.setItem(KEY, JSON.stringify(next)); }
-  catch { throw new Error('Review belum tersimpan. Penyimpanan browser penuh atau dibatasi.'); }
+  catch { throw new Error('The review could not be saved. Browser storage is full or restricted.'); }
   window.dispatchEvent(new Event(CHANGED));
   return review;
 }

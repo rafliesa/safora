@@ -1,8 +1,7 @@
-import { APP_NAME } from '../lib/brand';
 import { useEffect, useId, useRef } from 'react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
-import { ArrowUpRight, ChevronRight, CircleHelp, X } from 'lucide-react';
+import { ArrowUpRight, CircleHelp, X } from 'lucide-react';
 import type { Period } from '../lib/types';
 
 export function IconButton({ icon: Icon, label, className = '', ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { icon: LucideIcon; label: string }) {
@@ -17,8 +16,8 @@ export function SectionTitle({ children, aside }: { children: ReactNode; aside?:
   return <div className="section-heading"><h2><span className="section-marker" />{children}</h2>{aside}</div>;
 }
 
-export function PageTitle({ eyebrow, title, description, actions }: { eyebrow: string; title: string; description?: ReactNode; actions?: ReactNode }) {
-  return <div className="page-heading"><div><div className="eyebrow">WORKSPACE <ChevronRight size={11} /> {eyebrow}</div><h1>{title}</h1>{description && <p className="page-description">{description}</p>}</div>{actions && <div className="page-actions">{actions}</div>}</div>;
+export function PageTitle({ title, actions }: { title: string; actions?: ReactNode }) {
+  return <div className="page-heading"><div><h1>{title}</h1></div>{actions && <div className="page-actions">{actions}</div>}</div>;
 }
 
 export function EmptyState({ icon: Icon = CircleHelp, title, description, action, compact = false }: { icon?: LucideIcon; title: string; description: string; action?: ReactNode; compact?: boolean }) {
@@ -26,7 +25,7 @@ export function EmptyState({ icon: Icon = CircleHelp, title, description, action
 }
 
 export function PeriodTabs({ value, onChange }: { value: Period; onChange: (value: Period) => void }) {
-  return <div className="period-tabs" aria-label="Periode pengamatan">{([['day', 'Hari'], ['week', 'Minggu'], ['month', 'Bulan']] as const).map(([key, label]) => <button type="button" aria-pressed={value === key} className={value === key ? 'active' : ''} key={key} onClick={() => onChange(key)}>{label}</button>)}</div>;
+  return <div className="period-tabs" aria-label="Observation period">{([['day', 'Day'], ['week', 'Week'], ['month', 'Month']] as const).map(([key, label]) => <button type="button" aria-pressed={value === key} className={value === key ? 'active' : ''} key={key} onClick={() => onChange(key)}>{label}</button>)}</div>;
 }
 
 export function MetricCard({ label, value, unit, detail, icon: Icon, accent, danger }: { label: string; value: string | number; unit?: string; detail: string; icon: LucideIcon; accent?: boolean; danger?: boolean }) {
@@ -41,7 +40,7 @@ export function Dialog({ title, children, onClose, wide = false }: { title: stri
     if (dialog && !dialog.open) dialog.showModal();
     return () => { if (dialog?.open) dialog.close(); };
   }, []);
-  return <dialog ref={ref} className={`dialog ${wide ? 'dialog-wide' : ''}`} aria-labelledby={id} onCancel={onClose} onClick={event => { if (event.target === ref.current) onClose(); }}><div className="dialog-header"><div><span className="eyebrow">{APP_NAME} WORKSPACE</span><h2 id={id}>{title}</h2></div><IconButton icon={X} label="Tutup dialog" onClick={onClose} /></div><div className="dialog-body">{children}</div></dialog>;
+  return <dialog ref={ref} className={`dialog ${wide ? 'dialog-wide' : ''}`} aria-labelledby={id} onCancel={onClose} onClick={event => { if (event.target === ref.current) onClose(); }}><div className="dialog-header"><div><h2 id={id}>{title}</h2></div><IconButton icon={X} label="Close dialog" onClick={onClose} /></div><div className="dialog-body">{children}</div></dialog>;
 }
 
 export function TextLink({ children, href }: { children: ReactNode; href: string }) {

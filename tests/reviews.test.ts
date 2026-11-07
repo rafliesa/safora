@@ -43,13 +43,13 @@ test('new revisions show unreviewed while earlier review history is retained', (
 test('stale dialogs cannot save against a newer displayed snapshot', () => {
   const original = current();
   const revised = buildEmployeeSnapshot({ ...input, windows: [...exampleWindows, { ...original.windows[0], id: 'new-interval' }] });
-  assert.throws(() => saveLocalReview(original, revised, { status: 'reviewed', reviewer: 'HSE-01', notes: 'Outdated selection.' }), /Snapshot berubah/);
+  assert.throws(() => saveLocalReview(original, revised, { status: 'reviewed', reviewer: 'HSE-01', notes: 'Outdated selection.' }), /The snapshot changed/);
   assert.deepEqual(readLocalReviews(), {});
 });
 
 test('needs-evidence state retains the HSE note and exact scope', () => {
   const snapshot = current();
-  saveLocalReview(snapshot, snapshot, { status: 'needs_evidence', reviewer: 'HSE-02', notes: 'Butuh video dari sisi kiri pada episode holding.' });
+  saveLocalReview(snapshot, snapshot, { status: 'needs_evidence', reviewer: 'HSE-02', notes: 'Butuh video of sisi kiri pada episode holding.' });
   const stored = reviewForSnapshot(readLocalReviews(), snapshot)!;
   assert.equal(stored.status, 'needs_evidence');
   assert.match(stored.notes, /sisi kiri/);
@@ -59,7 +59,7 @@ test('storage failures do not claim a saved review', () => {
   const prototype = Object.getPrototypeOf(window.localStorage);
   const original = prototype.setItem;
   prototype.setItem = () => { throw new Error('Quota exceeded'); };
-  try { const snapshot = current(); assert.throws(() => saveLocalReview(snapshot, snapshot, { status: 'reviewed', reviewer: 'HSE', notes: 'Storage failure fixture.' }), /Review belum tersimpan/); }
+  try { const snapshot = current(); assert.throws(() => saveLocalReview(snapshot, snapshot, { status: 'reviewed', reviewer: 'HSE', notes: 'Storage failure fixture.' }), /The review could not be saved/); }
   finally { prototype.setItem = original; }
   assert.deepEqual(readLocalReviews(), {});
 });

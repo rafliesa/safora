@@ -26,7 +26,7 @@ export function useRecordingLibrary(serviceRecordings: Recording[]) {
         if (!blob || !active) return null;
         const url = URL.createObjectURL(blob); urls.push(url);
         return [recording.id, url] as const;
-      } catch (cause) { if (active) setStorageError(cause instanceof Error ? cause.message : 'Video lokal belum dapat dibaca.'); return null; }
+      } catch (cause) { if (active) setStorageError(cause instanceof Error ? cause.message : 'The local video could not be read.'); return null; }
     })).then(entries => { if (active) setPlayback(Object.fromEntries(entries.filter((entry): entry is readonly [string, string] => entry !== null))); });
     return () => { active = false; urls.forEach(url => URL.revokeObjectURL(url)); };
   }, [localFiles]);
@@ -34,14 +34,14 @@ export function useRecordingLibrary(serviceRecordings: Recording[]) {
   function persist(recording: Recording) {
     const next = [...local.filter(item => item.id !== recording.id), recording];
     try { writeLocalRecordings(next); }
-    catch { throw new Error('Perubahan belum tersimpan. Penyimpanan browser penuh atau dibatasi.'); }
+    catch { throw new Error('Changes could not be saved. Browser storage is full or restricted.'); }
     setLocal(next);
     return recording;
   }
 
   async function saveLabels(id: string, labels: ManualLabel[]) {
     const recording = recordings.find(item => item.id === id);
-    if (!recording) throw new Error('Rekaman tidak ditemukan.');
+    if (!recording) throw new Error('Recording not found.');
     const validation = validateLabels(labels, recording.duration_s);
     if (validation) throw new Error(validation);
     if (isConnectedMode && recording.source === 'service') return persist(await workspaceApi.saveLabels(id, labels));
@@ -49,8 +49,8 @@ export function useRecordingLibrary(serviceRecordings: Recording[]) {
   }
 
   async function attachVideo(file: File, cameraId: string, existingId?: string, recordedAt?: string): Promise<Recording> {
-    if (recordedAt && Number.isNaN(new Date(recordedAt).getTime())) throw new Error('Waktu mulai rekaman tidak valid. Periksa tanggal dan waktu WIB.');
-    if (!file.type.startsWith('video/') && !/\.(mp4|webm|mov|m4v|ogg)$/i.test(file.name)) throw new Error('Pilih video MP4 atau WebM yang didukung browser.');
+    if (recordedAt && Number.isNaN(new Date(recordedAt).getTime())) throw new Error('Invalid recording start time. Check the date and time in WIB.');
+    if (!file.type.startsWith('video/') && !/\.(mp4|webm|mov|m4v|ogg)$/i.test(file.name)) throw new Error('Choose an MP4 or WebM video supported by your browser.');
     const metadata = await inspectVideo(file);
     const existing = recordings.find(recording => recording.id === existingId);
     const id = existing?.id || `local-${crypto.randomUUID()}`;

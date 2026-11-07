@@ -20,7 +20,7 @@ export function localDate(value = new Date(), timezone = 'Asia/Jakarta'): string
 
 export function dateRange(date: string, period: Period): { from: string; to: string } {
   const end = new Date(`${date}T12:00:00Z`);
-  if (Number.isNaN(end.getTime())) throw new Error('Tanggal tidak valid.');
+  if (Number.isNaN(end.getTime())) throw new Error('Invalid date.');
   const start = new Date(end);
   if (period === 'week') start.setUTCDate(end.getUTCDate() - 6);
   if (period === 'month') start.setUTCDate(1);
@@ -28,11 +28,11 @@ export function dateRange(date: string, period: Period): { from: string; to: str
 }
 
 export function risk(score: number | null): { label: string; tone: string; action: string } {
-  if (score === null || !Number.isInteger(score) || score < 1 || score > 15) return { label: 'Belum dinilai', tone: 'neutral', action: 'Worksheet belum lengkap' };
-  if (score >= 11) return { label: 'Tinggi · tindakan segera', tone: 'danger', action: 'Very high · ikuti prosedur tindakan segera setelah konfirmasi HSE' };
-  if (score >= 8) return { label: 'Tinggi', tone: 'danger', action: 'High · prioritaskan tindakan korektif' };
-  if (score >= 4) return { label: 'Sedang', tone: 'warning', action: 'Medium · tentukan perbaikan dan asesmen ulang' };
-  return { label: 'Rendah', tone: 'success', action: score === 1 ? 'Negligible · observasi rutin' : 'Low · pertimbangkan perbaikan' };
+  if (score === null || !Number.isInteger(score) || score < 1 || score > 15) return { label: 'Not assessed', tone: 'neutral', action: 'Incomplete worksheet' };
+  if (score >= 11) return { label: 'High · immediate action', tone: 'danger', action: 'Very high · follow immediate action procedures after HSE confirmation' };
+  if (score >= 8) return { label: 'High', tone: 'danger', action: 'High · prioritize corrective action' };
+  if (score >= 4) return { label: 'Medium', tone: 'warning', action: 'Medium · plan improvements and reassessment' };
+  return { label: 'Low', tone: 'success', action: score === 1 ? 'Negligible · routine observation' : 'Low · consider improvements' };
 }
 
 export function validateRange(start: number, end: number, duration: number): boolean {
@@ -72,16 +72,16 @@ export async function inspectVideo(file: File): Promise<{ duration_s: number; wi
   try {
     const metadata = await new Promise<{ duration_s: number; width: number; height: number }>((resolve, reject) => {
       const video = document.createElement('video');
-      const timeout = window.setTimeout(() => { cleanup(); reject(new Error('Video tidak dapat dibaca dalam 20 detik. Pilih file MP4 atau WebM yang lebih kecil.')); }, 20000);
+      const timeout = window.setTimeout(() => { cleanup(); reject(new Error('The video could not be read within 20 seconds. Choose a smaller MP4 or WebM file.')); }, 20000);
       const cleanup = () => { window.clearTimeout(timeout); video.onloadedmetadata = null; video.onerror = null; video.removeAttribute('src'); video.load(); };
       video.preload = 'metadata';
       video.onloadedmetadata = () => {
         const data = { duration_s: video.duration, width: video.videoWidth, height: video.videoHeight };
         cleanup();
-        if (!Number.isFinite(data.duration_s) || data.duration_s <= 0 || data.width <= 0) reject(new Error('Durasi atau resolusi video tidak valid. Coba MP4 (H.264) atau WebM.'));
+        if (!Number.isFinite(data.duration_s) || data.duration_s <= 0 || data.width <= 0) reject(new Error('Invalid video duration or resolution. Try MP4 (H.264) or WebM.'));
         else resolve(data);
       };
-      video.onerror = () => { cleanup(); reject(new Error('Format video tidak didukung atau file rusak. Coba MP4 (H.264) atau WebM.')); };
+      video.onerror = () => { cleanup(); reject(new Error('The video format is unsupported or the file is damaged. Try MP4 (H.264) or WebM.')); };
       video.src = url;
     });
     const digest = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());

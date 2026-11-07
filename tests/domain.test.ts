@@ -23,12 +23,12 @@ test('invalid or overlapping-duration totals cannot become a numeric result', ()
 });
 
 test('REBA 11–15 preserves the Immediate action direction', () => {
-  for (const score of [11, 12, 15]) assert.match(risk(score).label, /tindakan segera/);
-  assert.equal(risk(10).label, 'Tinggi');
-  assert.equal(risk(7).label, 'Sedang');
-  assert.equal(risk(3).label, 'Rendah');
-  assert.equal(risk(null).label, 'Belum dinilai');
-  assert.equal(risk(16).label, 'Belum dinilai');
+  for (const score of [11, 12, 15]) assert.match(risk(score).label, /immediate action/);
+  assert.equal(risk(10).label, 'High');
+  assert.equal(risk(7).label, 'Medium');
+  assert.equal(risk(3).label, 'Low');
+  assert.equal(risk(null).label, 'Not assessed');
+  assert.equal(risk(16).label, 'Not assessed');
 });
 
 test('selected range remains within the actual source duration', () => {

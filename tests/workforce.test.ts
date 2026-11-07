@@ -67,9 +67,9 @@ test('manual labeling supports several people in one video and validates time/ta
   const first: ManualLabel = { worker_id: 'W1', worker_name: 'One', subject_label: 'Left', start_s: 0, end_s: 60, origin: 'manual' };
   const second = { ...first, worker_id: 'W2', worker_name: 'Two', subject_label: 'Right' };
   assert.equal(validateLabels([first, second], 60), null);
-  assert.match(validateLabels([first, { ...second, subject_label: 'Left' }], 60) || '', /penanda subjek/);
-  assert.match(validateLabels([first, { ...second, end_s: 61 }], 60) || '', /Rentang label/);
-  assert.match(validateLabels([first, { ...second, worker_id: 'W1' }], 60) || '', /bertumpang tindih/);
+  assert.match(validateLabels([first, { ...second, subject_label: 'Left' }], 60) || '', /subject identifier/);
+  assert.match(validateLabels([first, { ...second, end_s: 61 }], 60) || '', /Label intervals/);
+  assert.match(validateLabels([first, { ...second, worker_id: 'W1' }], 60) || '', /overlap/);
   assert.equal(validateLabels([first, { ...first, subject_label: 'Later', start_s: 60, end_s: 120 }], 120), null);
 });
 

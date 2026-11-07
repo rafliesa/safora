@@ -17,7 +17,7 @@ export class ApiError extends Error {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  if (!baseUrl) throw new ApiError(503, 'Layanan analisis belum terhubung. Video dan parameter Anda tetap tersedia di halaman ini.');
+  if (!baseUrl) throw new ApiError(503, 'The analysis service is not connected. Your video and settings remain available on this page.');
   let response: Response;
   try {
     response = await fetch(`${baseUrl}${path}`, {
@@ -26,18 +26,18 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       headers: { ...(init?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }), ...init?.headers },
     });
   } catch {
-    throw new ApiError(503, 'Layanan tidak dapat dijangkau. Periksa koneksi lalu coba lagi.');
+    throw new ApiError(503, 'The service could not be reached. Check your connection and try again.');
   }
   const body: unknown = await response.json().catch(() => null);
   if (!response.ok) {
     const detail = body && typeof body === 'object' && 'detail' in body ? (body as { detail: unknown }).detail : null;
     const messages: Record<number, string> = {
-      404: 'Sesi atau asesmen ini belum tersedia.',
-      422: 'Parameter belum valid. Periksa rentang waktu dan identitas subjek.',
-      501: 'Penyimpanan belum tersedia pada tahap frontend ini. Data belum dikirim atau disimpan sebagai asesmen.',
-      503: 'Pipeline analisis belum tersedia. Belum ada inferensi atau penilaian yang dijalankan.',
+      404: 'This session or assessment is unavailable.',
+      422: 'Invalid parameters. Check the time range and subject identity.',
+      501: 'Assessment storage is unavailable in this frontend preview. No data has been submitted or saved as an assessment.',
+      503: 'The analysis pipeline is unavailable. No inference or assessment has been run.',
     };
-    throw new ApiError(response.status, typeof detail === 'string' ? detail : messages[response.status] || 'Permintaan gagal. Silakan coba lagi.');
+    throw new ApiError(response.status, typeof detail === 'string' ? detail : messages[response.status] || 'The request failed. Please try again.');
   }
   return body as T;
 }
@@ -53,10 +53,10 @@ export const api = {
   videos: () => baseUrl ? request<PageResult<VideoAsset>>('/videos') : Promise.resolve({ items: [], total: 0 }),
   sessions: (query = '') => baseUrl ? request<PageResult<AnalysisSession>>(`/analysis-sessions${query}`) : Promise.resolve({ items: [], total: 0 }),
   dashboard: (query: string) => baseUrl ? request<DashboardSummary>(`/dashboard${query}`) : Promise.resolve(emptyDashboard()),
-  session: (id: string) => baseUrl ? request<AnalysisSession>(`/analysis-sessions/${encodeURIComponent(id)}`) : Promise.reject<AnalysisSession>(new ApiError(404, 'Sesi ini belum tersedia. Belum ada sesi analisis yang tersimpan.')),
-  assessment: (id: string) => baseUrl ? request<Assessment>(`/analysis-sessions/${encodeURIComponent(id)}/assessment`) : Promise.reject<Assessment>(new ApiError(404, 'Asesmen ini belum tersedia. Belum ada hasil analisis yang tersimpan.')),
+  session: (id: string) => baseUrl ? request<AnalysisSession>(`/analysis-sessions/${encodeURIComponent(id)}`) : Promise.reject<AnalysisSession>(new ApiError(404, 'This session is unavailable. No analysis session has been saved.')),
+  assessment: (id: string) => baseUrl ? request<Assessment>(`/analysis-sessions/${encodeURIComponent(id)}/assessment`) : Promise.reject<Assessment>(new ApiError(404, 'This assessment is unavailable. No analysis results have been saved.')),
   registerVideo: (file: File, metadata: Omit<VideoAsset, 'id' | 'url'>) => {
-    if (!baseUrl) return Promise.reject<VideoAsset>(new ApiError(501, 'Pendaftaran video belum tersedia. Pratinjau lokal dan parameter tetap tersedia; belum ada video yang diunggah.'));
+    if (!baseUrl) return Promise.reject<VideoAsset>(new ApiError(501, 'Video registration is unavailable. Your local preview and settings remain available; no video has been uploaded.'));
     const data = new FormData();
     data.append('file', file);
     data.append('metadata', JSON.stringify(metadata));
@@ -64,14 +64,14 @@ export const api = {
   },
   startAnalysis: (input: AnalysisInput) => {
     if (!input.worker_id.trim() || !input.station_id.trim() || !input.task.trim() || !Number.isFinite(input.start_s) || !Number.isFinite(input.end_s) || input.start_s < 0 || input.end_s <= input.start_s) {
-      return Promise.reject<AnalysisSession>(new ApiError(422, 'Lengkapi identitas, tugas, stasiun, dan rentang waktu yang valid.'));
+      return Promise.reject<AnalysisSession>(new ApiError(422, 'Enter an identity, task, station, and valid time range.'));
     }
     return request<AnalysisSession>('/analysis-sessions', { method: 'POST', body: JSON.stringify(input) });
   },
   updateAssessment: (id: string, inputs: Record<string, unknown>) => baseUrl
     ? request<Assessment>(`/analysis-sessions/${encodeURIComponent(id)}/assessment`, { method: 'PATCH', body: JSON.stringify(inputs) })
-    : Promise.reject<Assessment>(new ApiError(501, 'Perubahan asesmen belum tersedia. Belum ada versi baru yang dibuat.')),
+    : Promise.reject<Assessment>(new ApiError(501, 'Assessment editing is unavailable. No new version has been created.')),
   saveReview: (id: string, input: ReviewInput) => baseUrl
     ? request<Assessment>(`/assessment-versions/${encodeURIComponent(id)}/reviews`, { method: 'POST', body: JSON.stringify(input) })
-    : Promise.reject<Assessment>(new ApiError(501, 'Penyimpanan review belum tersedia. Belum ada persetujuan yang dicatat.')),
+    : Promise.reject<Assessment>(new ApiError(501, 'Review storage is unavailable. No approval has been recorded.')),
 };

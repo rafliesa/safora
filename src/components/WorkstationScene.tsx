@@ -5,7 +5,7 @@ export default function WorkstationScene({ view = 'side', variant = 'A', large =
   const warning = variant === 'B';
   const color = '#9BBEDC';
   const lean = variant === 'D' ? -12 : warning ? 14 : 0;
-  return <svg className={`workstation-scene ${large ? 'scene-large' : ''}`} viewBox="0 0 640 300" fill="none" role="img" aria-label={`Ilustrasi workstation tampak ${view === 'front' ? 'depan' : 'samping'}, bukan rekaman atau hasil analisis`}>
+  return <svg className={`workstation-scene ${large ? 'scene-large' : ''}`} viewBox="0 0 640 300" fill="none" role="img" aria-label={`Workstation illustration, ${view === 'front' ? 'front view' : 'side view'}, not a recording or analysis result`}>
     <defs><pattern id={`grid-${id}`} width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" stroke="#94a3b8" strokeOpacity=".07" strokeWidth=".7" /></pattern></defs>
     <rect width="640" height="300" fill="#08131C" /><rect width="640" height="300" fill={`url(#grid-${id})`} />
     <path d="M40 259H602" stroke="#455165" strokeWidth="1.3" /><path d="M80 259L39 300M180 259L158 300M280 259L276 300M380 259L397 300M480 259L516 300M580 259L635 300M12 285H628" stroke="#94a3b8" strokeOpacity=".08" />

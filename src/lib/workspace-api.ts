@@ -6,13 +6,13 @@ import type { NoiseReading } from './assessment-types';
 const origin = (import.meta.env?.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '');
 
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
-  if (!origin) throw new ApiError(503, 'Layanan belum terhubung. Analisis otomatis berjalan di layanan kamera saat tersedia.');
+  if (!origin) throw new ApiError(503, 'The service is not connected. Automatic analysis runs through the camera service when available.');
   let response: Response;
   try { response = await fetch(`${origin}${path}`, { ...init, signal: AbortSignal.timeout(15000), headers: { ...(init?.body instanceof FormData ? {} : { 'Content-Type': 'application/json' }), ...init?.headers } }); }
-  catch { throw new ApiError(503, 'Layanan tidak dapat dijangkau. Data terakhir tetap ditampilkan.'); }
+  catch { throw new ApiError(503, 'The service could not be reached. The most recent data is still displayed.'); }
   const body = await response.json().catch(() => null);
-  if (!response.ok) throw new ApiError(response.status, typeof body?.detail === 'string' ? body.detail : 'Permintaan belum dapat diselesaikan.');
-  if (body === null) throw new ApiError(502, 'Respons layanan belum valid.');
+  if (!response.ok) throw new ApiError(response.status, typeof body?.detail === 'string' ? body.detail : 'The request could not be completed.');
+  if (body === null) throw new ApiError(502, 'The service returned an invalid response.');
   return body as T;
 }
 
@@ -29,5 +29,5 @@ export const workspaceApi = {
   },
   reviewWorker: (workerId: string, data: { reviewer: string; rationale: string; window_versions: { id: string; revision: number }[] }) => origin
     ? call<{ saved: boolean }>(`/workers/${encodeURIComponent(workerId)}/reviews`, { method: 'POST', body: JSON.stringify(data) })
-    : Promise.reject(new ApiError(501, 'Review belum dapat disimpan tanpa layanan. Belum ada hasil yang ditandai disetujui.')),
+    : Promise.reject(new ApiError(501, 'The review cannot be saved without the service. No results have been marked as approved.')),
 };

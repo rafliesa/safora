@@ -148,21 +148,21 @@ export function intradayTotals(windows: ObservationWindow[]) {
 export function validateLabels(labels: ManualLabel[], duration: number): string | null {
   const targets = new Set<string>();
   for (const label of labels) {
-    if (!label.worker_id.trim() || !label.worker_name.trim() || !label.subject_label.trim()) return 'Lengkapi ID, nama, dan penanda subjek pada setiap label.';
-    if (![label.start_s, label.end_s].every(Number.isFinite) || label.start_s < 0 || label.end_s <= label.start_s || label.end_s > duration) return 'Rentang label harus berada di dalam durasi rekaman.';
-    if (targets.has(label.subject_label.trim().toLowerCase())) return 'Gunakan penanda subjek yang berbeda untuk setiap orang dalam rekaman.';
+    if (!label.worker_id.trim() || !label.worker_name.trim() || !label.subject_label.trim()) return 'Enter an employee ID, name, and subject identifier for each label.';
+    if (![label.start_s, label.end_s].every(Number.isFinite) || label.start_s < 0 || label.end_s <= label.start_s || label.end_s > duration) return 'Label intervals must fall within the recording duration.';
+    if (targets.has(label.subject_label.trim().toLowerCase())) return 'Use a unique subject identifier for each person in the recording.';
     targets.add(label.subject_label.trim().toLowerCase());
   }
   for (let i = 0; i < labels.length; i++) for (let j = i + 1; j < labels.length; j++) {
-    if (labels[i].worker_id.trim() === labels[j].worker_id.trim() && labels[i].start_s < labels[j].end_s && labels[j].start_s < labels[i].end_s) return 'Pegawai yang sama memiliki label waktu bertumpang tindih. Periksa interval dan penanda subjek.';
+    if (labels[i].worker_id.trim() === labels[j].worker_id.trim() && labels[i].start_s < labels[j].end_s && labels[j].start_s < labels[i].end_s) return 'This employee has overlapping labels. Check the intervals and subject identifiers.';
   }
   return null;
 }
 
 export function formatDate(date: string, options?: Intl.DateTimeFormatOptions): string {
-  return new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', ...options, timeZone: 'Asia/Jakarta' }).format(new Date(date.length === 10 ? `${date}T12:00:00Z` : date));
+  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', ...options, timeZone: 'Asia/Jakarta' }).format(new Date(date.length === 10 ? `${date}T12:00:00Z` : date));
 }
 
 export function observationMinutes(seconds: number): string {
-  return (seconds / 60).toLocaleString('id-ID', { maximumFractionDigits: 1 });
+  return (seconds / 60).toLocaleString('en-GB', { maximumFractionDigits: 1 });
 }

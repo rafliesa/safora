@@ -35,7 +35,7 @@ test('reference noise is personal 88 dBA for 40 minutes: 16.7% interval contribu
   assert.ok(Math.abs(result.noise.daily_doses[0].pct! - 100 / 6) < 1e-9);
   assert.equal(result.noise.readings[0].profile?.criterion_dba, 85);
   assert.equal(result.noise.readings[0].profile?.exchange_rate_db, 3);
-  assert.equal(result.noise.status, 'Cakupan parsial, perlu review HSE');
+  assert.equal(result.noise.status, 'Partial coverage, HSE review needed');
   assert.ok(result.noise.readings.every(reading => reading.source === 'simulated'));
 });
 
@@ -61,15 +61,15 @@ test('area readings retain their scope and never become a personal dose', () => 
   assert.deepEqual(result.noise.scopes, ['area']);
   assert.deepEqual(result.noise.daily_doses, []);
   assert.ok(result.noise.readings.every(reading => reading.dose_contribution_pct === null));
-  assert.equal(result.noise.status, 'Cakupan area · asesmen personal diperlukan');
+  assert.equal(result.noise.status, 'Area coverage · personal assessment needed');
 });
 
 test('different workers have distinct results, including missing instrument data', () => {
   assert.notEqual(snapshot(0).msd.score, snapshot(1).msd.score);
-  assert.equal(snapshot(2).noise.status, 'Kriteria paparan tercapai');
+  assert.equal(snapshot(2).noise.status, 'Exposure criterion reached');
   assert.ok(snapshot(2).noise.daily_doses[0].pct! > 100);
   assert.deepEqual(snapshot(5).noise.readings, []);
-  assert.equal(snapshot(5).noise.status, 'Data pengukuran belum tersedia');
+  assert.equal(snapshot(5).noise.status, 'Measurement data unavailable');
 });
 
 test('weekly points use usable hours; REBA is a maximum, and evidence can span cameras', () => {
@@ -108,7 +108,7 @@ test('overlapping personal noise intervals do not silently double the dose', () 
   const doses = noiseDailyDoses([first, { ...first, id: 'overlapping-second-instrument' }]);
   assert.equal(doses[0].pct, null);
   assert.equal(doses[0].covered_s, 2400);
-  assert.match(doses[0].reason!, /bertumpang tindih/);
+  assert.match(doses[0].reason!, /overlap/);
 });
 
 test('constant simulated readings are clipped at the selected Jakarta day boundary', () => {
