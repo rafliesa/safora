@@ -77,3 +77,7 @@ Detail pegawai berisi header identitas/periode/shift/lokasi/waktu hasil, coverag
 Fixture harian EMP-8021: rekaman 40 menit, valid 30 menit, Medium REBA 5, paparan 12 menit (40%), holding terlama 45 detik, 14 episode, 28 poin prototipe, dan 56 poin/jam valid. Pembacaan personal Simulasi 88 dBA selama 40 menit memberi kontribusi 16,7% menurut profil contoh 85/3. Status kebisingan berasal dari fixture, terpisah dari band REBA. Dosis lintas hari tidak dijumlahkan menjadi dosis mingguan.
 
 Aksi **Tandai perlu bukti** dan **Simpan review** memakai localStorage. Review baru berstatus **Belum direview**; review pada pegawai/periode/revisi lain tidak ikut diterapkan. Revisi baru mempertahankan catatan lama dan meminta peninjauan kembali. Warna risiko hanya mengklasifikasikan MSD; status kebisingan tetap mengikuti pembacaan mock.
+
+### Dashboard URLs
+
+Dashboard pages use `/overview`, `/employees`, `/cameras`, and `/recordings/:id` without a hash. Old `/#/...` links are migrated automatically. Production hosting must serve `frontend/dist/index.html` for unmatched page routes (SPA fallback); API routes must remain separate. Vite dev and preview support this fallback. `VITE_API_BASE_URL` can include a version prefix such as `http://localhost:8000/api/v1` when the backend serves that prefix.

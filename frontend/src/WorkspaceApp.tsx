@@ -1,3 +1,4 @@
+import { navigate } from './lib/navigation';
 import { APP_NAME } from './lib/brand';
 import { useEffect, useMemo, useState } from 'react';
 import { AlertCircle, ArrowRight, Bell, Camera, Check, PanelLeftClose, PanelLeftOpen, Cpu, FolderArchive, HeartPulse, LayoutDashboard, RefreshCw, ShieldCheck, Sparkles, Users, X } from 'lucide-react';
@@ -22,7 +23,8 @@ const navigation = [
 ];
 
 function readRoute() {
-  const route = window.location.hash.slice(1).replace(/\/$/, '') || '/overview';
+  if (window.location.hash.startsWith('#/')) window.history.replaceState(null, '', window.location.hash.slice(1));
+  const route = (window.location.pathname.replace(/\/$/, '') || '/overview') + window.location.search;
   if (route.startsWith('/analyze/')) return route.replace('/analyze/', '/cameras/');
   if (route.startsWith('/processing')) return '/overview';
   if (route.startsWith('/history')) return '/cameras/archive';
@@ -31,7 +33,7 @@ function readRoute() {
 
 function initialExample() {
   try {
-    if (new URLSearchParams(window.location.hash.split('?')[1] || '').get('demo') === '1') return true;
+    if (new URLSearchParams(window.location.search).get('demo') === '1') return true;
     const selected = window.sessionStorage.getItem('raise-data-mode-v1');
     if (selected) return selected === 'example';
     return !isConnectedMode;
@@ -39,7 +41,8 @@ function initialExample() {
 }
 
 function initialPeriod(): Period {
-  return new URLSearchParams(window.location.hash.split('?')[1] || '').get('period') === 'day' ? 'day' : 'week';
+  const value = new URLSearchParams(window.location.search).get('period');
+  return value === 'day' || value === 'month' ? value : 'week';
 }
 
 export default function WorkspaceApp() {
@@ -87,9 +90,20 @@ export default function WorkspaceApp() {
   const libraryProps = { recordings: library.recordings, playback: library.playback, onAttach: library.attachVideo, notify: setToast };
 
   useEffect(() => {
-    const change = () => { const nextRoute = readRoute(); setRoute(nextRoute); const params = new URLSearchParams(nextRoute.split('?')[1] || ''); if (params.get('demo') === '1') setExample(true); const requestedPeriod = params.get('period'); if (requestedPeriod === 'day' || requestedPeriod === 'week') setPeriod(requestedPeriod); if (window.innerWidth < 768) setSidebarCollapsed(true); window.scrollTo({ top: 0, behavior: 'instant' }); document.getElementById('main-content')?.focus({ preventScroll: true }); };
+    const change = () => { const nextRoute = readRoute(); setRoute(nextRoute); const params = new URLSearchParams(nextRoute.split('?')[1] || ''); if (params.get('demo') === '1') setExample(true); const requestedPeriod = params.get('period'); if (requestedPeriod === 'day' || requestedPeriod === 'week' || requestedPeriod === 'month') setPeriod(requestedPeriod); if (window.innerWidth < 768) setSidebarCollapsed(true); window.scrollTo({ top: 0, behavior: 'instant' }); document.getElementById('main-content')?.focus({ preventScroll: true }); };
+    const click = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const link = event.target instanceof window.Element ? event.target.closest('a') : null;
+      if (!link || link.hasAttribute('download') || (link.target && link.target !== '_self') || !link.getAttribute('href')?.startsWith('/')) return;
+      const url = new URL(link.href);
+      if (url.origin !== window.location.origin) return;
+      event.preventDefault();
+      navigate(url.pathname + url.search + url.hash);
+    };
+    window.addEventListener('popstate', change);
     window.addEventListener('hashchange', change);
-    return () => window.removeEventListener('hashchange', change);
+    document.addEventListener('click', click);
+    return () => { window.removeEventListener('popstate', change); window.removeEventListener('hashchange', change); document.removeEventListener('click', click); };
   }, []);
   useEffect(() => { try { window.sessionStorage.setItem('raise-data-mode-v1', example ? 'example' : 'service'); } catch { /* Preview still works when browser storage is restricted. */ } }, [example]);
   useEffect(() => {
@@ -116,8 +130,8 @@ export default function WorkspaceApp() {
             aria-expanded={!sidebarCollapsed} aria-controls="workspace-sidebar" onClick={() => setSidebarCollapsed(value => !value)}>
             {sidebarCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
           </button>
-          <div className="sidebar-heading"><a className="brand" href="#/overview" aria-label={`${APP_NAME}, overview`}><span className="brand-symbol"><HeartPulse size={25} strokeWidth={1.65} /></span><span className="brand-copy"><strong>{APP_NAME}<i /></strong></span></a></div>
-<nav className="primary-navigation" aria-label="Main navigation">{navigation.map(({ path: navPath, icon: Icon, label, shortLabel }) => <a key={navPath} href={`#${navPath}`} aria-label={label} title={label} aria-current={isActive(navPath) ? 'page' : undefined}><Icon size={17} strokeWidth={1.7} /><span>{shortLabel}</span></a>)}</nav></aside>
+          <div className="sidebar-heading"><a className="brand" href="/overview" aria-label={`${APP_NAME}, overview`}><span className="brand-symbol"><HeartPulse size={25} strokeWidth={1.65} /></span><span className="brand-copy"><strong>{APP_NAME}<i /></strong></span></a></div>
+<nav className="primary-navigation" aria-label="Main navigation">{navigation.map(({ path: navPath, icon: Icon, label, shortLabel }) => <a key={navPath} href={navPath} aria-label={label} title={label} aria-current={isActive(navPath) ? 'page' : undefined}><Icon size={17} strokeWidth={1.7} /><span>{shortLabel}</span></a>)}</nav></aside>
         <main id="main-content" className={section === 'overview' ? 'overview-page' : undefined} tabIndex={-1} aria-busy={workspace.loading}>
           {workspace.error && <div className="error-message service-error" role="alert"><AlertCircle size={18} /><p>{workspace.error}</p><button onClick={workspace.refresh}>Retry sync<RefreshCw size={13} /></button></div>}
           {library.storageError && <div className="error-message service-error" role="alert"><AlertCircle size={18} /><p>{library.storageError}</p></div>}
@@ -126,7 +140,7 @@ export default function WorkspaceApp() {
             : section === 'cameras' ? resourceId && resourceId !== 'archive' ? <SourceDetail key={resourceId} cameraId={resourceId} sources={workspace.sources} recordings={library.recordings} playback={library.playback} /> : <CameraHub {...libraryProps} sources={workspace.sources} archive={resourceId === 'archive'} cameraFilter={queryParams.get('camera') || undefined} />
             : section === 'recordings' ? <RecordingDetail key={resourceId} {...libraryProps} recordingId={resourceId} workers={workers} onSaveLabels={library.saveLabels} />
             : section === 'report' ? <Report sessionId={resourceId || undefined} localVideo={null} videos={videos} onMethods={() => setModal('methods')} />
-            : <div className="not-found"><span>404</span><h1>Page not found</h1><p>Return to the dashboard to continue your review.</p><a href="#/overview" className="button button-dark">Company dashboard<ArrowRight size={16} /></a></div>}
+            : <div className="not-found"><span>404</span><h1>Page not found</h1><p>Return to the dashboard to continue your review.</p><a href="/overview" className="button button-dark">Company dashboard<ArrowRight size={16} /></a></div>}
         </main>
       </div>
     </div>
@@ -139,10 +153,10 @@ export default function WorkspaceApp() {
 function WorkspaceDialog({ modal, onClose, onMethods, sourcesOnline }: { modal: Exclude<Modal, null>; onClose: () => void; onMethods: () => void; sourcesOnline: number }) {
   const titles = { guide: 'RAISE Observation Workflow', privacy: 'Privacy & Recording Archive', methods: 'Assessment Methods', notifications: 'Workspace Notifications', service: 'Camera Service Status' };
   return <Dialog title={titles[modal]} onClose={onClose} wide={modal === 'methods'}>
-    {modal === 'guide' && <><div className="guide-intro"><span><HeartPulse size={32} strokeWidth={1.5} /></span><p>Periodic analysis, employee summaries, and HSE review in one workflow.</p></div><div className="guide-steps">{[['Cameras are shared sources', 'Analysis starts automatically with the camera source. A camera is not permanently assigned to an employee.'], ['Confirm recording labels', 'For this prototype, employees are labeled manually in videos. A recording can include several labeled subjects.'], ['Summaries accumulate every minute', 'Results appear immediately in the company dashboard and employee details. Daily and weekly summaries are available.'], ['Review findings and history', 'The dashboard flags employees who need review. The archive keeps recordings and labels for traceability.']].map(([title, detail], index) => <div key={title}><span>0{index + 1}</span><div><h3>{title}</h3><p>{detail}</p></div></div>)}</div><div className="dialog-actions"><button className="button button-outline" onClick={onMethods}>About the methods<Sparkles size={15} /></button><a className="button button-dark" href="#/employees" onClick={onClose}>Employee dashboard<ArrowRight size={15} /></a></div></>}
+    {modal === 'guide' && <><div className="guide-intro"><span><HeartPulse size={32} strokeWidth={1.5} /></span><p>Periodic analysis, employee summaries, and HSE review in one workflow.</p></div><div className="guide-steps">{[['Cameras are shared sources', 'Analysis starts automatically with the camera source. A camera is not permanently assigned to an employee.'], ['Confirm recording labels', 'For this prototype, employees are labeled manually in videos. A recording can include several labeled subjects.'], ['Summaries accumulate every minute', 'Results appear immediately in the company dashboard and employee details. Daily and weekly summaries are available.'], ['Review findings and history', 'The dashboard flags employees who need review. The archive keeps recordings and labels for traceability.']].map(([title, detail], index) => <div key={title}><span>0{index + 1}</span><div><h3>{title}</h3><p>{detail}</p></div></div>)}</div><div className="dialog-actions"><button className="button button-outline" onClick={onMethods}>About the methods<Sparkles size={15} /></button><a className="button button-dark" href="/employees" onClick={onClose}>Employee dashboard<ArrowRight size={15} /></a></div></>}
     {modal === 'privacy' && <><div className="dialog-feature-icon"><ShieldCheck size={29} /></div><p className="dialog-lead">Recordings and identities can be traced back to their sources.</p><ul className="privacy-list"><li><Check size={16} /><div><strong>Manual labels per recording</strong><p>Labels include employee identity, a subject identifier, and an interval. Camera use does not assign a camera to an employee.</p></div></li><li><Check size={16} /><div><strong>Local prototype archive</strong><p>Added files are stored locally in your browser and remain available after refresh. They are not shared across devices. Clearing site data deletes the local archive.</p></div></li><li><Check size={16} /><div><strong>The service manages live recordings</strong><p>Continuous recording and centralized storage require a camera service. Recording is unavailable until a source is connected.</p></div></li></ul></>}
     {modal === 'methods' && <><p className="dialog-lead">Periodic analysis adds observed intervals to employee summaries.</p><div className="method-cards"><article><span className="method-number">01</span><Badge tone="lime">SEVERITY</Badge><h3>REBA by phase</h3><p>A = Table A + load/force<br />B = Table B + coupling<br />C = Table C(A, B)<br />R = C + activity adjustments</p><small>REBA scores are not summed across minutes. Summaries show the highest score for the period and a separate review status.</small></article><article><span className="method-number">02</span><Badge tone="lime">DURATION</Badge><h3>ISO 11226-inspired</h3><p>Duration follows observable intervals. Unknown periods interrupt continuous holding time and reduce valid coverage.</p><small>The 08:00–17:00 Asia/Jakarta shift schedule does not imply nine hours of observation.</small></article><article><span className="method-number">03</span><Badge tone="warning">EXPERIMENTAL</Badge><h3>RAISE exposure points</h3><p>Points = Σ wᵢ × (dᵢ + eᵢ)<br />w = 1 for C 1–3<br />w = 2 for C 4–7<br />w = 3 for C 8–12</p><small>New intervals add to cumulative points. Refreshing existing intervals does not count them again.</small></article></div><div className="risk-reference"><strong>REBA dashboard bands</strong><Badge tone="success">1–3 · Low</Badge><Badge tone="warning">4–7 · Medium</Badge><Badge tone="danger">8–10 · High</Badge><Badge tone="danger">11–15 · Immediate action</Badge></div><p className="helper">RAISE points are a prototype metric, not a diagnosis. AI results appear before HSE validation, with the review status always visible.</p></>}
-    {modal === 'notifications' && <div className="notification-empty"><div className="dialog-feature-icon"><Bell size={28} /></div><h3>Reviews are in the employee dashboard.</h3><p>Employees with findings are flagged for review. Open the list to review results by period.</p><a className="button button-dark" href="#/employees?review=needed" onClick={onClose}>View review queue<ArrowRight size={15} /></a></div>}
+    {modal === 'notifications' && <div className="notification-empty"><div className="dialog-feature-icon"><Bell size={28} /></div><h3>Reviews are in the employee dashboard.</h3><p>Employees with findings are flagged for review. Open the list to review results by period.</p><a className="button button-dark" href="/employees?review=needed" onClick={onClose}>View review queue<ArrowRight size={15} /></a></div>}
     {modal === 'service' && <><div className="service-status"><span className="dialog-feature-icon"><Cpu size={28} /></span><div><Badge tone={sourcesOnline ? 'success' : 'warning'} dot>{sourcesOnline} sources connected</Badge><h3>{sourcesOnline ? 'Camera sources available' : 'Waiting for camera service'}</h3></div></div><p className="dialog-lead">Automatic analysis and recording run through the camera service. The dashboard retrieves results every 60 seconds; closing it does not stop the service.</p><div className="service-detail"><span>Site time zone<strong>Asia/Jakarta</strong></span><span>Dashboard refresh interval<strong>60 seconds</strong></span><span>Employee association<strong>Manual labels per recording</strong></span><span>Available summaries<strong>Daily · weekly · history</strong></span></div></>}
   </Dialog>;
 }

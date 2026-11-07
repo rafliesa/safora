@@ -25,7 +25,6 @@ async function mount(path: string) {
 }
 const summaryRegion = () => screen.getByRole('region', { name: 'Employee and period summary' });
 const msdCard = () => screen.getByRole('article', { name: 'MSD Exposure' });
-const noiseCard = () => screen.getByRole('article', { name: 'Noise Exposure' });
 
 test('sidebar title toggle collapses labels while navigation stays accessible', async () => {
   const user = userEvent.setup();
@@ -107,16 +106,18 @@ test('employee selection opens daily/weekly exposure detail with all header cont
   assert.ok(context.getByText('Observed locations'));
   assert.ok(context.getByText('Last results update'));
   assert.ok(context.getByText('Not reviewed'));
-  assert.ok(context.getByText('Demo data'));
+  assert.equal(context.queryByText('Demo data'), null);
   assert.ok(screen.getByRole('button', { name: 'Daily', exact: true }));
   assert.ok(screen.getByRole('button', { name: 'Weekly', exact: true }));
-  assert.equal(screen.queryByRole('button', { name: 'Month', exact: true }), null);
+  assert.ok(screen.getByRole('button', { name: 'Monthly', exact: true }));
+  assert.equal(screen.queryByLabelText('Summary end date'), null);
+  assert.equal(screen.queryByRole('article', { name: 'Noise Exposure' }), null);
   assert.equal(screen.queryByText(/Postur saat ini|Kondisi terkini secara live/i), null);
 });
 
 test('reference daily cards show 28 points, 56 per hour, Medium REBA, 40%, and 16.7% personal interval dose', async () => {
   await mount('/employees/EMP-8021?period=day&demo=1');
-  const msd = within(msdCard()), noise = within(noiseCard());
+  const msd = within(msdCard());
   assert.ok(msd.getByText('Medium', { exact: true }));
   assert.match(msdCard().textContent || '', /5\s*\/\s*15/);
   assert.ok(msd.getByText('40%'));
@@ -125,11 +126,6 @@ test('reference daily cards show 28 points, 56 per hour, Medium REBA, 40%, and 1
   assert.ok(msd.getByText('45', { selector: 'strong' }));
   assert.ok(msd.getByText('14', { selector: 'strong' }));
   assert.ok(msd.getByText('Lower back exposure'));
-  assert.ok(noise.getByText('Partial coverage, HSE review needed'));
-  assert.ok(noise.getByText('16.7%'));
-  assert.match(noiseCard().textContent || '', /88\s*dBA/);
-  assert.ok(noise.getByText(/Example 85\/3 profile/));
-  assert.equal(noise.queryByText('Medium', { exact: true }), null);
   assert.equal(screen.getByRole('progressbar', { name: 'Valid observation percentage' }).getAttribute('aria-valuenow'), '75');
 });
 
@@ -140,27 +136,24 @@ test('switching period changes cards, trend, evidence and preserves per-hour ari
   await user.click(screen.getByRole('button', { name: 'Weekly', exact: true }));
   assert.ok(screen.getByRole('heading', { name: 'Weekly Exposure Trend' }));
   assert.notEqual(msdCard().textContent, dailyText);
-  assert.match(noiseCard().textContent || '', /not summed across shifts/);
   await user.click(within(msdCard()).getByRole('button', { name: 'Open evidence' }));
   const dialog = screen.getByRole('dialog', { name: 'Recording Evidence · MSD' });
   assert.ok(within(dialog).getAllByText('Camera C').length > 0);
   assert.ok(within(dialog).getAllByText('Camera A').length > 0);
+  await user.click(within(dialog).getByRole('button', { name: 'Close evidence' }));
+  await user.click(screen.getByRole('button', { name: 'Monthly', exact: true }));
+  assert.ok(screen.getByRole('heading', { name: 'Monthly Exposure Trend' }));
+  assert.equal(screen.getByRole('button', { name: 'Monthly' }).getAttribute('aria-pressed'), 'true');
 });
 
 test('changing employee updates MSD, noise status and missing-data explanations', async () => {
   await mount('/employees/EMP-8109?period=day&demo=1');
   assert.ok(within(msdCard()).getByText('High', { exact: true }));
-  assert.ok(within(noiseCard()).getByText('Exposure criterion reached'));
-  assert.ok(within(noiseCard()).getByText('133.3%'));
   act(() => { window.location.hash = '/employees/EMP-6920?period=day'; });
   await waitFor(() => assert.ok(screen.getByRole('heading', { name: 'Jessica Tan' })));
   assert.ok(within(msdCard()).getByText('Low', { exact: true }));
-  assert.ok(within(noiseCard()).getByText('Area coverage · personal assessment needed'));
-  assert.ok(within(noiseCard()).getByText('Area readings do not establish personal dose'));
   act(() => { window.location.hash = '/employees/EMP-8044?period=day'; });
   await waitFor(() => assert.ok(screen.getByRole('heading', { name: 'Maya Putri' })));
-  assert.ok(within(noiseCard()).getByText('Measurement data unavailable'));
-  assert.ok(within(noiseCard()).getByText('Calculation profile unavailable'));
 });
 
 test('assessment and evidence modals retain metadata when the actual file is missing', async () => {
@@ -214,7 +207,6 @@ test('save-review uses frontend local state, updates REBA attribution, and does 
     await user.click(within(dialog).getByRole('button', { name: 'Save review', exact: true }));
     await waitFor(() => assert.ok(within(summaryRegion()).getByText('Reviewed by HSE')));
     assert.ok(within(msdCard()).getByText('Reviewed by HSE · local'));
-    assert.ok(within(noiseCard()).getByText('Partial coverage, HSE review needed'));
     assert.equal(Object.values(readLocalReviews())[0].storage, 'frontend_local');
     assert.equal(writes, 0);
   } finally { workspaceApi.reviewWorker = original; }
@@ -328,9 +320,9 @@ test('periodic dashboard refresh remains read-only every minute and clears its t
 
 test('empty historical periods name missing data instead of displaying a low risk', async () => {
   await mount('/employees/EMP-8021?period=day&demo=1');
-  fireEvent.change(screen.getByLabelText('Summary end date'), { target: { value: '2020-01-01' } });
+  cleanup();
+  render(<EmployeeDetail workerId="EMP-8021" workers={exampleWorkers} windows={exampleWindows} recordings={exampleRecordings} noiseReadings={exampleNoiseReadings} date="2020-01-01" period="day" setPeriod={() => {}} setDate={() => {}} example onExample={() => {}} onRefresh={() => {}} />);
   await waitFor(() => assert.ok(within(msdCard()).getByText('Risk not assessed')));
-  assert.ok(within(noiseCard()).getByText('Measurement data unavailable'));
   assert.equal((screen.getByRole('button', { name: 'Review this period' }) as HTMLButtonElement).disabled, true);
 });
 
@@ -338,6 +330,7 @@ test('skip link focuses content without changing the current route', async () =>
   const user = userEvent.setup();
   await mount('/employees');
   await user.click(screen.getByRole('link', { name: 'Skip to content' }));
-  assert.equal(window.location.hash, '#/employees');
+  assert.equal(window.location.pathname, '/employees');
+  assert.equal(window.location.hash, '');
   assert.equal(document.activeElement?.id, 'main-content');
 });

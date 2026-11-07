@@ -78,8 +78,8 @@ export function CompanyDashboard(props: WorkforceProps) {
       </section>
       <section className="panel review-queue-panel">
         <SectionTitle aside={<span className="count-pill">{pending.length}</span>}>HSE Review Priorities</SectionTitle>
-        {pending.length ? <div className="review-queue">{pending.slice(0, 4).map(summary => <a key={summary.worker.id} href={`#/employees/${summary.worker.id}`}><WorkerAvatar worker={summary.worker} /><div><strong>{summary.worker.name}</strong><span>{summary.worker.department} · Peak REBA {summary.peak_reba}</span></div><ArrowUpRight size={16} /></a>)}</div> : <EmptyState icon={ClipboardCheck} title="No reviews in the queue" description={selected.length ? 'No review flags for this period.' : 'The queue appears when observation results are available.'} compact />}
-        <a className="button button-dark full-width" href="#/employees?review=needed">Open employee dashboard<ArrowRight size={15} /></a>
+        {pending.length ? <div className="review-queue">{pending.slice(0, 4).map(summary => <a key={summary.worker.id} href={`/employees/${summary.worker.id}`}><WorkerAvatar worker={summary.worker} /><div><strong>{summary.worker.name}</strong><span>{summary.worker.department} · Peak REBA {summary.peak_reba}</span></div><ArrowUpRight size={16} /></a>)}</div> : <EmptyState icon={ClipboardCheck} title="No reviews in the queue" description={selected.length ? 'No review flags for this period.' : 'The queue appears when observation results are available.'} compact />}
+        <a className="button button-dark full-width" href="/employees?review=needed">Open employee dashboard<ArrowRight size={15} /></a>
       </section>
     </div>
     <div className="employee-distributions">
@@ -113,7 +113,7 @@ export function EmployeeDirectory(props: WorkforceProps & { reviewOnly?: boolean
     <PageTitle title="Employees" actions={<PeriodControls {...props} />} />
     <div className="employee-directory-summary"><span><Users size={17} /><strong>{workers.length}</strong> employees</span><span><ClipboardCheck size={16} /><strong>{pending}</strong> need HSE review</span></div>
     <div className="employee-filters"><div className="search-field"><Search size={17} /><input aria-label="Search employees" placeholder="Search by employee name or ID…" value={search} onChange={event => setSearch(event.target.value)} />{search && <button aria-label="Clear employee search" onClick={() => setSearch('')}><X size={15} /></button>}</div><label className="filter-select"><Users size={14} /><select aria-label="Filter by department" value={department} onChange={event => setDepartment(event.target.value)}><option value="all">All departments</option>{departments.map(value => <option key={value}>{value}</option>)}</select><ChevronDown size={13} /></label><label className="filter-select"><Filter size={14} /><select aria-label="Filter by employee review" value={reviewFilter} onChange={event => setReviewFilter(event.target.value)}><option value="all">All employees</option><option value="needed">Needs review</option><option value="other">No review flag</option></select><ChevronDown size={13} /></label></div>
-    {visible.length ? <div className="employee-grid">{visible.map(summary => <EmployeeCard key={summary.worker.id} summary={summary} />)}</div> : <section className="panel"><EmptyState icon={search || department !== 'all' || reviewFilter !== 'all' ? Search : Users} title={workers.length ? 'No matching employees' : 'No employee data yet'} description={workers.length ? 'Change your search or filters to see other employees.' : 'Add employee labels to a recording.'} action={!workers.length && <button className="button button-lime" onClick={onExample}><Sparkles size={16} />View the demo employee directory</button>} /></section>}
+    {visible.length ? <div className="employee-table-scroll" role="region" aria-label="Employee assessment table" tabIndex={0}><table className="employee-table"><caption>Employee assessments for the selected period</caption><thead><tr><th scope="col">Employee</th><th scope="col">Department</th><th scope="col">MSD · REBA</th><th scope="col">Noise <small>Simulated</small></th><th scope="col">HSE review</th><th scope="col">Details</th></tr></thead><tbody>{visible.map(summary => <EmployeeRow key={summary.worker.id} summary={summary} />)}</tbody></table></div> : <section className="panel"><EmptyState icon={search || department !== 'all' || reviewFilter !== 'all' ? Search : Users} title={workers.length ? 'No matching employees' : 'No employee data yet'} description={workers.length ? 'Change your search or filters to see other employees.' : 'Add employee labels to a recording.'} action={!workers.length && <button className="button button-lime" onClick={onExample}><Sparkles size={16} />View the demo employee directory</button>} /></section>}
   </>;
 }
 
@@ -122,7 +122,7 @@ function WorkerAvatar({ worker, large = false }: { worker: Worker; large?: boole
   return <span className={`worker-avatar worker-avatar-${tone} ${large ? 'worker-avatar-large' : ''}`}>{worker.initials}</span>;
 }
 
-function EmployeeCard({ summary }: { summary: WorkerSummary & { assessment?: EmployeeAssessmentSnapshot; localReview?: LocalHseReview | null } }) {
+function EmployeeRow({ summary }: { summary: WorkerSummary & { assessment?: EmployeeAssessmentSnapshot; localReview?: LocalHseReview | null } }) {
   const { worker, assessment, localReview } = summary;
   const band = risk(summary.peak_reba);
   const reviewText = localReview?.status === 'reviewed' ? 'Reviewed' : localReview?.status === 'needs_evidence' ? 'Evidence needed' : summary.needs_review ? 'Needs review' : 'Not reviewed';
@@ -135,18 +135,12 @@ function EmployeeCard({ summary }: { summary: WorkerSummary & { assessment?: Emp
     'Measurement value unavailable': 'Value unavailable',
     'Exposure criterion reached': 'Criterion reached',
   };
-  return <article className={'employee-card employee-card-compact' + (summary.needs_review ? ' employee-card-review' : '')}>
-    <div className="employee-card-identity">
-      <WorkerAvatar worker={worker} />
-      <div><h2>{worker.name}</h2><p>{worker.id} · {worker.department}</p></div>
-    </div>
-    <div className="employee-card-signals">
-      <div><span>MSD · REBA</span><div><strong>{summary.peak_reba ?? '—'}<small>/15</small></strong><Badge tone={band.tone}>{assessment?.msd.band || 'Not assessed'}</Badge></div></div>
-      <div><span>Noise <small>Simulated</small></span><strong title={noiseStatus}>{shortNoiseStatus[noiseStatus] || noiseStatus}</strong></div>
-    </div>
-    <div className="employee-card-footer">
-      <Badge tone={reviewTone} dot>{reviewText}</Badge>
-      <a href={'#/employees/' + worker.id} className="text-link" aria-label="View employee details">View details<ArrowUpRight size={15} /></a>
-    </div>
-  </article>;
+  return <tr>
+    <th scope="row"><div className="employee-table-identity"><WorkerAvatar worker={worker} /><div><strong>{worker.name}</strong><span>{worker.id}</span></div></div></th>
+    <td>{worker.department}</td>
+    <td><div className="employee-table-score"><strong>{summary.peak_reba ?? '—'}<small>/15</small></strong><Badge tone={band.tone}>{assessment?.msd.band || 'Not assessed'}</Badge></div></td>
+    <td title={noiseStatus}>{shortNoiseStatus[noiseStatus] || noiseStatus}</td>
+    <td><Badge tone={reviewTone} dot>{reviewText}</Badge></td>
+    <td><a href={'/employees/' + worker.id} className="text-link" aria-label="View employee details">View details<ArrowUpRight size={15} /></a></td>
+  </tr>;
 }

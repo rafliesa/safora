@@ -50,6 +50,24 @@
 .page-heading > div:first-child::before { top: 2px; bottom: 2px; }
 .dialog-header h2 { margin-top: 0; }
 .employee-directory-summary { margin-bottom: 20px; }
+.employee-table-scroll { overflow-x: auto; border: 1px solid #dbe2df; border-radius: 16px; background: white; }
+.employee-table { width: 100%; min-width: 850px; border-collapse: collapse; text-align: left; }
+.employee-table caption { text-align: left; padding: 16px 20px; font-size: 12px; color: var(--color-text-muted); border-bottom: 1px solid #e7ece9; }
+.employee-table thead { background: #f5f7f5; }
+.employee-table th, .employee-table td { padding: 16px 20px; border-bottom: 1px solid #e7ece9; font-size: 12px; color: var(--color-text-secondary); }
+.employee-table thead th { font-weight: 600; white-space: nowrap; }
+.employee-table thead small { display: block; font-size: 10px; font-weight: 400; color: var(--color-text-muted); margin-top: 2px; }
+.employee-table tbody tr:last-child > * { border-bottom: 0; }
+.employee-table tbody tr:hover { background: #f7f9f8; }
+.employee-table tbody th { font-weight: 400; }
+.employee-table-identity { display: flex; align-items: center; gap: 12px; }
+.employee-table-identity strong { display: block; font-size: 13px; font-weight: 600; color: var(--color-ink); white-space: nowrap; }
+.employee-table-identity span:not(.worker-avatar) { display: block; font-size: 11px; color: var(--color-text-muted); margin-top: 3px; }
+.employee-table-score { display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.employee-table-score > strong { font-size: 20px; font-weight: 600; color: var(--color-ink); }
+.employee-table-score small { font-size: 11px; font-weight: 400; color: var(--color-text-muted); }
+.employee-table .text-link { white-space: nowrap; font-size: 12px; }
+.employee-table-scroll:focus-visible { outline: 2px solid var(--color-brand); outline-offset: 3px; }
 .camera-card .camera-preview { width: 100%; min-width: 0; }
 .camera-card .camera-preview > svg { max-width: 100%; }
 .hub-toolbar .workstation-filter { min-width: 230px; padding: 0 14px; gap: 10px; border: 1px solid #dbe2df; border-radius: 12px; background: white; transition: border-color 150ms ease, box-shadow 150ms ease; }
@@ -380,4 +398,65 @@
   .assessment-card-redesign .exposure-card-header, .msd-duration-block, .noise-level-highlight { print-color-adjust: exact; }
   .employee-hse-body { display: block; }
   .employee-context-fields { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* Employee detail keeps the measured trends ahead of supporting notes. */
+.employee-period-tabs { min-width: 260px; }
+.employee-period-tabs button { color: #405b71; }
+.employee-period-tabs button.active { color: #fff; }
+.employee-context-card { margin-bottom: 20px; }
+.employee-context-details { margin-top: 12px; }
+.employee-context-details > summary, .assessment-extra > summary { cursor: pointer; font-size: 12px; color: #405b71; padding: 12px 0; }
+.assessment-extra { border-top: 1px solid #dce4e8; margin-top: 18px; }
+.assessment-extra > summary:focus-visible, .employee-context-details > summary:focus-visible { outline: 2px solid #47769e; outline-offset: 3px; }
+.exposure-assessment-grid .assessment-trend-panel { margin-top: 20px; padding: 18px 0 0; background: transparent; }
+.exposure-assessment-grid .exposure-plot { min-height: 200px; }
+.exposure-assessment-grid + .coverage-overview { margin-top: 24px; }
+@media (max-width: 700px) {
+  .employee-period-tabs { min-width: 0; width: 100%; }
+  .exposure-assessment-grid .exposure-plot { min-height: 0; }
+}
+.exposure-assessment-grid .exposure-card-header { background: #fff; color: #243f50; border-bottom: 1px solid #dce4e8; }
+.exposure-assessment-grid .exposure-card-header h2 { color: #243f50; }
+.exposure-assessment-grid .exposure-card-icon { background: #edf2f5; color: #405b71; border-color: #dce4e8; }
+.employee-hse-heading > .badge { width: auto; height: auto; border: 0; border-radius: 20px; }
+
+.exposure-assessment-grid .assessment-card-redesign { padding: 16px; }
+.exposure-assessment-grid .exposure-card-header { margin: -16px -16px 14px; padding: 12px 16px; min-height: 58px; }
+.exposure-assessment-grid .exposure-card-header h2 { font-size: 16px; }
+.exposure-assessment-grid .exposure-card-icon { width: 30px; height: 30px; border-radius: 9px; }
+.exposure-assessment-grid .exposure-card-icon svg { width: 18px; height: 18px; }
+.exposure-assessment-grid .msd-score-summary { padding: 14px; gap: 10px 16px; margin-bottom: 12px; grid-template-columns: 88px 1fr; }
+.exposure-assessment-grid .msd-score-summary > div:first-child { padding-right: 16px; }
+.exposure-assessment-grid .msd-score-summary > div:first-child > strong { font-size: 38px; }
+.exposure-assessment-grid .msd-score-summary > div:first-child > span { font-size: 10px; }
+.exposure-assessment-grid .msd-score-summary p { margin-top: 5px; font-size: 12px; }
+.exposure-assessment-grid .noise-assessment-banner { padding: 12px; margin-bottom: 12px; }
+.exposure-assessment-grid .noise-value-pair { gap: 8px; margin-bottom: 12px; }
+.exposure-assessment-grid .noise-value-pair > div { padding: 12px; }
+.exposure-assessment-grid .noise-value-pair > div > strong { font-size: 28px; margin: 6px 0; }
+.exposure-assessment-grid .assessment-trend-panel { margin: 12px 0; padding-top: 12px; }
+.exposure-assessment-grid .exposure-trend-heading { margin-bottom: 10px; }
+.exposure-assessment-grid .exposure-trend-heading h3 { font-size: 13px; }
+.exposure-assessment-grid .exposure-plot { min-height: 0; }
+.exposure-assessment-grid .exposure-plot svg, .exposure-assessment-grid .noise-history-chart svg { max-height: 190px; }
+.exposure-assessment-grid .assessment-extra { margin-top: 10px; }
+.exposure-assessment-grid .exposure-card-actions { margin-top: 8px; padding-top: 4px; gap: 8px; }
+.exposure-assessment-grid .msd-score-summary { grid-template-columns: 88px minmax(0, 1fr); }
+.exposure-assessment-grid .msd-score-summary > div:nth-child(2) { min-width: 0; }
+.exposure-assessment-grid .msd-score-summary .badge { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+
+.exposure-assessment-grid.exposure-assessment-single { grid-template-columns: minmax(0, 1fr); }
+
+.exposure-assessment-single .assessment-trend-panel { padding: 20px; }
+.exposure-assessment-single .exposure-plot svg { display: block; width: 100%; height: auto; max-height: none; }
+.exposure-assessment-single .msd-score-summary { grid-template-columns: 110px minmax(0, 1fr); padding: 18px; }
+.exposure-assessment-single .msd-score-summary > div:first-child > span { white-space: nowrap; }
+.exposure-assessment-single .exposure-card-actions { justify-content: flex-end; }
+.exposure-assessment-single .exposure-card-actions > .button { flex: 0 1 auto; min-width: 160px; }
+@media (max-width: 700px) {
+  .exposure-assessment-single .assessment-trend-panel { padding: 12px; }
+  .exposure-assessment-single .msd-score-summary { grid-template-columns: 88px minmax(0, 1fr); padding: 14px; }
+  .exposure-assessment-single .exposure-card-actions { flex-wrap: wrap; }
+  .exposure-assessment-single .exposure-card-actions > .button { flex: 1 1 160px; }
 }
