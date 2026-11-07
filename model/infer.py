@@ -11,7 +11,8 @@ from argparse import Namespace
 
 ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT/'training'))
-from repetitions import add_repetitions
+sys.path.insert(0, str(ROOT.parent))
+from model.repetitions import add_repetitions
 
 
 def sha256(path):
