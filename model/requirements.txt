@@ -1,0 +1,7 @@
+# Install a CPU/CUDA-compatible PyTorch + torchvision build separately.
+ultralytics==8.4.204
+scikit-learn==1.9.1
+numpy==2.5.4
+joblib==1.6.0
+opencv-python==5.0.0.93
+openpyxl==3.1.5

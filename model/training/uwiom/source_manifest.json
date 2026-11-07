@@ -1,0 +1,1161 @@
+[
+  {
+    "filename": "10.mat",
+    "id": "a6f220fa-4dff-4a38-9ccd-3f57cbe64d38",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "fbfe2002-78a6-4114-aee5-3395847b9b5b",
+      "sha256_hash": "0e22d5e242068016ffaff754619283b3713feaac97c799d50852e3dcecf4b139",
+      "content_type": "application/octet-stream",
+      "size": 809418,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/a6f220fa-4dff-4a38-9ccd-3f57cbe64d38/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/a6f220fa-4dff-4a38-9ccd-3f57cbe64d38/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026149274Z"
+    },
+    "size": 809418,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "11.mat",
+    "id": "5177e9e7-b3c3-440c-844e-268174c14af6",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "770e8d1c-444e-4964-b802-7bb8a643009d",
+      "sha256_hash": "7ba152745608dd5e2706f269762f3603847640b2ab61972c4486e6a4dc458dde",
+      "content_type": "application/octet-stream",
+      "size": 1028874,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/5177e9e7-b3c3-440c-844e-268174c14af6/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/5177e9e7-b3c3-440c-844e-268174c14af6/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026154374Z"
+    },
+    "size": 1028874,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "12.mat",
+    "id": "7cc43d69-703f-4ff8-9b78-b35963896020",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "edeaea46-1caf-4e17-8409-226b12ea8243",
+      "sha256_hash": "e7740cb5706b17a2c20ace16348007686bf9b8fd53b61d46720ed02f06377f83",
+      "content_type": "application/octet-stream",
+      "size": 1020765,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/7cc43d69-703f-4ff8-9b78-b35963896020/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/7cc43d69-703f-4ff8-9b78-b35963896020/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026157665Z"
+    },
+    "size": 1020765,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "13.mat",
+    "id": "b531010c-8f3e-4e1a-9aea-9677a3d4349c",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "52252329-85d3-4aa7-ba2e-88b9d3807202",
+      "sha256_hash": "32631134e7212beede798173d9654713459c06190c524ed384454cbb04df2abe",
+      "content_type": "application/octet-stream",
+      "size": 709008,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/b531010c-8f3e-4e1a-9aea-9677a3d4349c/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/b531010c-8f3e-4e1a-9aea-9677a3d4349c/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026161205Z"
+    },
+    "size": 709008,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "14.mat",
+    "id": "33e6b57f-51b6-482d-b806-63e9aff91dda",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "7c0c96ab-4cbf-4ad4-9de5-8f6eff3d915e",
+      "sha256_hash": "2f123741669c920323555cac91a80cf2ca05a2850c955b18282b96d896d71bf3",
+      "content_type": "application/octet-stream",
+      "size": 946598,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/33e6b57f-51b6-482d-b806-63e9aff91dda/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/33e6b57f-51b6-482d-b806-63e9aff91dda/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026164325Z"
+    },
+    "size": 946598,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "15.mat",
+    "id": "791655e7-45ce-4a20-afb3-305f51151ef2",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "3e38f7a7-f6ad-43ac-a35f-7153a3fd56e4",
+      "sha256_hash": "799aa0a5f9f38153b9f81d6ee955d0a8a08545028279d9c6768ea2b2a5cce67c",
+      "content_type": "application/octet-stream",
+      "size": 715160,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/791655e7-45ce-4a20-afb3-305f51151ef2/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/791655e7-45ce-4a20-afb3-305f51151ef2/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026167475Z"
+    },
+    "size": 715160,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "16.mat",
+    "id": "6babebc9-cd94-497b-a3fe-ea2ecf9e6daa",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "7a013414-1f42-4d69-8faa-aced044d9eca",
+      "sha256_hash": "3112cd7defdba8b6b9eda4a56b2bd9acfa4f20480100e160085da72ae3886cdd",
+      "content_type": "application/octet-stream",
+      "size": 1082231,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/6babebc9-cd94-497b-a3fe-ea2ecf9e6daa/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/6babebc9-cd94-497b-a3fe-ea2ecf9e6daa/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026170835Z"
+    },
+    "size": 1082231,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "17.mat",
+    "id": "0ab826bc-af3b-44c9-a652-78ea95064a55",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "9eb82367-d8d8-4922-8304-f9513dfeffda",
+      "sha256_hash": "9416bfbb10b379eb11e0f36ebde2307feca5887bd90cb178f6bcd74f14856943",
+      "content_type": "application/octet-stream",
+      "size": 822975,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/0ab826bc-af3b-44c9-a652-78ea95064a55/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/0ab826bc-af3b-44c9-a652-78ea95064a55/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026173895Z"
+    },
+    "size": 822975,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "18.mat",
+    "id": "b829af36-090c-4151-aa6d-5ca9d85df953",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "8dab5b58-a0c6-44e7-a41e-3337240e839f",
+      "sha256_hash": "b2965795a6356992e5040b3558046afaeb6f435354bed39d54846747bde3620d",
+      "content_type": "application/octet-stream",
+      "size": 703954,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/b829af36-090c-4151-aa6d-5ca9d85df953/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/b829af36-090c-4151-aa6d-5ca9d85df953/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026177065Z"
+    },
+    "size": 703954,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "19.mat",
+    "id": "742c1deb-5ef3-4c02-8020-2005da411b87",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "5b59c390-1ec2-4b5e-b345-94d0c840dd44",
+      "sha256_hash": "de6bae4cf3137f446a4e2527cbb6dd5cec8a809c623bd87e1ecab761efa63d44",
+      "content_type": "application/octet-stream",
+      "size": 855751,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/742c1deb-5ef3-4c02-8020-2005da411b87/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/742c1deb-5ef3-4c02-8020-2005da411b87/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026180105Z"
+    },
+    "size": 855751,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "1.mat",
+    "id": "5102cebe-3312-490d-ac3d-ee5ae6c3ee9d",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "89706870-7d56-4d6a-b195-81cbdf0798b4",
+      "sha256_hash": "509b575d430f719d7cdc90ef825b87607b06a809c5af073177d6cb4cd94cc932",
+      "content_type": "application/octet-stream",
+      "size": 651282,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/5102cebe-3312-490d-ac3d-ee5ae6c3ee9d/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/5102cebe-3312-490d-ac3d-ee5ae6c3ee9d/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026183285Z"
+    },
+    "size": 651282,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "20.mat",
+    "id": "fbf8e891-b425-4f7e-9a81-98281fef3c04",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "2564d559-dc7f-402c-9568-aa8cd94fb1eb",
+      "sha256_hash": "2100ab100f201fb1af2b72a9b6ae2fa362309aa036953dee2b2489c97eec4c82",
+      "content_type": "application/octet-stream",
+      "size": 631877,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/fbf8e891-b425-4f7e-9a81-98281fef3c04/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/fbf8e891-b425-4f7e-9a81-98281fef3c04/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026186685Z"
+    },
+    "size": 631877,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "2.mat",
+    "id": "643f4947-59e4-468a-8007-16e1cb633a76",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "438459e9-b61d-40eb-9e86-29bb35a95ca4",
+      "sha256_hash": "9bc2cb22d14eeedf5f9a2a0ef77c5592566ff455b9a5c5218917d35d0d56fe0c",
+      "content_type": "application/octet-stream",
+      "size": 676939,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/643f4947-59e4-468a-8007-16e1cb633a76/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/643f4947-59e4-468a-8007-16e1cb633a76/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026189705Z"
+    },
+    "size": 676939,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "3.mat",
+    "id": "1f8b56cd-20a5-47e4-88db-0c4ced42a273",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "5094267c-7bfd-45ab-9241-1c30d8017af4",
+      "sha256_hash": "83953a4adc9971c06b7a7a6ccfd257e1b41b1ae0a0fd84280389e0e78ef13489",
+      "content_type": "application/octet-stream",
+      "size": 508409,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/1f8b56cd-20a5-47e4-88db-0c4ced42a273/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/1f8b56cd-20a5-47e4-88db-0c4ced42a273/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026192735Z"
+    },
+    "size": 508409,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "4.mat",
+    "id": "ca5e2941-32bc-410d-a65a-530460970bc6",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "2271e394-7753-41f9-9361-5c684f7a7e6a",
+      "sha256_hash": "b37c38617ce622347c4023ebaaeade7641660eb65b6b7a061104b4c3e836e2e6",
+      "content_type": "application/octet-stream",
+      "size": 796903,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/ca5e2941-32bc-410d-a65a-530460970bc6/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/ca5e2941-32bc-410d-a65a-530460970bc6/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026195745Z"
+    },
+    "size": 796903,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "5.mat",
+    "id": "c58c0a9b-837c-41f8-988d-b36a1981438c",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "751c0ae7-eac2-46d9-9a5c-6cd31495eec7",
+      "sha256_hash": "961dd21c95c04ad647439f1ee62dce89c04605285a516b473b836908bb780896",
+      "content_type": "application/octet-stream",
+      "size": 637926,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/c58c0a9b-837c-41f8-988d-b36a1981438c/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/c58c0a9b-837c-41f8-988d-b36a1981438c/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026198685Z"
+    },
+    "size": 637926,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "6.mat",
+    "id": "b20958a6-3c26-4a03-b273-d6c59a88e469",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "dff747f9-97da-40e9-afb2-28d3d44a7a1b",
+      "sha256_hash": "11dbd7ed1437b70104490fe1e7a5fffe94570bc30a86143db722236e7dff369b",
+      "content_type": "application/octet-stream",
+      "size": 746151,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/b20958a6-3c26-4a03-b273-d6c59a88e469/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/b20958a6-3c26-4a03-b273-d6c59a88e469/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026201775Z"
+    },
+    "size": 746151,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "7.mat",
+    "id": "8d8b6dec-4701-4dc5-987d-a70943355f5e",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "4cd89df6-6d27-474e-8edd-c4246e6a931a",
+      "sha256_hash": "b66443a7cef3d863bf1472af21fb94e8d65ef085000e6cde653a056af048c0f9",
+      "content_type": "application/octet-stream",
+      "size": 617335,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/8d8b6dec-4701-4dc5-987d-a70943355f5e/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/8d8b6dec-4701-4dc5-987d-a70943355f5e/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026204506Z"
+    },
+    "size": 617335,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "8.mat",
+    "id": "f3c3d710-c1d1-42e7-b868-ca0079528c54",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "8caa9108-aacd-4087-9e1e-c9b8145ed7f6",
+      "sha256_hash": "056744b33b595376fd8d86a99f88eccb0c19b7c18317a5d38589ab30c22ce141",
+      "content_type": "application/octet-stream",
+      "size": 810626,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/f3c3d710-c1d1-42e7-b868-ca0079528c54/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/f3c3d710-c1d1-42e7-b868-ca0079528c54/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026207395Z"
+    },
+    "size": 810626,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "9.mat",
+    "id": "d9471191-2fa0-4a86-adeb-66dfa79539db",
+    "folder_id": "326e2eab-73c3-4a9c-839b-c6bc7a26ad65",
+    "content_details": {
+      "id": "282cbd1e-c05d-4eef-a9c9-ffac926abd84",
+      "sha256_hash": "56be8c04f48c9dd3b213ff7da41afeb3f7cab48984683920d0dd510206bd4202",
+      "content_type": "application/octet-stream",
+      "size": 681655,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/d9471191-2fa0-4a86-adeb-66dfa79539db/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/d9471191-2fa0-4a86-adeb-66dfa79539db/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:28.026210406Z"
+    },
+    "size": 681655,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "JointPositions"
+  },
+  {
+    "filename": "01.txt",
+    "id": "8dd1a8af-ec92-43c3-be1c-b08106ce5b5e",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "967475a8-6216-4fb1-80c5-c4c3cbc6c07d",
+      "sha256_hash": "f5071ff88339dec7aa20afc99b0d61c0ae636920b93b46dba8e76093891ca962",
+      "content_type": "text/plain",
+      "size": 30984,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/8dd1a8af-ec92-43c3-be1c-b08106ce5b5e/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/8dd1a8af-ec92-43c3-be1c-b08106ce5b5e/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143682186Z"
+    },
+    "size": 30984,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "02.txt",
+    "id": "3d724d00-fa69-42b4-8067-c72b982029db",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "8dae5a9b-20ff-4788-a103-5939f69757bc",
+      "sha256_hash": "4e7647214ae6fbeb11db2ba7b6512342f5f4e10917448992354628fd2c655fbc",
+      "content_type": "text/plain",
+      "size": 31377,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/3d724d00-fa69-42b4-8067-c72b982029db/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/3d724d00-fa69-42b4-8067-c72b982029db/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143686597Z"
+    },
+    "size": 31377,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "03.txt",
+    "id": "e43e3ac1-bb95-41e6-9003-5d7e33ae231a",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "4eb3174e-a971-4118-8689-5df6018f5172",
+      "sha256_hash": "049a7ce387240e00c376805a0be8604ec14673a46c54820d74474f949100f045",
+      "content_type": "text/plain",
+      "size": 23979,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/e43e3ac1-bb95-41e6-9003-5d7e33ae231a/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/e43e3ac1-bb95-41e6-9003-5d7e33ae231a/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143689387Z"
+    },
+    "size": 23979,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "04.txt",
+    "id": "9fdb930e-f8f2-4be7-83b6-2ebc10eeb940",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "1d457d14-ddbe-439d-9e8b-78f10835cad7",
+      "sha256_hash": "335bc19cd3a7214d29b4014d09ff302f93231492ec8ab6011f8346259ff71109",
+      "content_type": "text/plain",
+      "size": 38198,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/9fdb930e-f8f2-4be7-83b6-2ebc10eeb940/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/9fdb930e-f8f2-4be7-83b6-2ebc10eeb940/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143692327Z"
+    },
+    "size": 38198,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "05.txt",
+    "id": "5e679560-317a-4be4-82a5-012207c22db1",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "ac14e6c7-bddd-41b7-9457-a29d4f656553",
+      "sha256_hash": "6d71ac9b699be0c7cf3f02649a56d423925310935da68a092ab9e2b7475a34f9",
+      "content_type": "text/plain",
+      "size": 29947,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/5e679560-317a-4be4-82a5-012207c22db1/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/5e679560-317a-4be4-82a5-012207c22db1/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143695157Z"
+    },
+    "size": 29947,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "06.txt",
+    "id": "8a0ecb94-700b-416c-92dc-3fa3c5af884e",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "f21430d0-b9ae-4063-b66a-8dbfb7078623",
+      "sha256_hash": "754564be1cd409bafd548d1644b07f91ce85d51b7b45cfb63db9139cbebba79c",
+      "content_type": "text/plain",
+      "size": 35407,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/8a0ecb94-700b-416c-92dc-3fa3c5af884e/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/8a0ecb94-700b-416c-92dc-3fa3c5af884e/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143704217Z"
+    },
+    "size": 35407,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "07.txt",
+    "id": "bb1ddda3-5de5-417d-9062-59a011d806f5",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "0dfe65c8-0b32-4b8b-a97c-60048c308886",
+      "sha256_hash": "3cfb484970c8ed01e884f1d4cfb2e1c3da678da17bb289ada8b6f3c93cc80faa",
+      "content_type": "text/plain",
+      "size": 28844,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/bb1ddda3-5de5-417d-9062-59a011d806f5/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/bb1ddda3-5de5-417d-9062-59a011d806f5/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143707177Z"
+    },
+    "size": 28844,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "08.txt",
+    "id": "4f679e74-4c29-453e-9699-56ab9a46e2bd",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "83885b5c-51e0-4e0d-84d5-b1d9c5d1635f",
+      "sha256_hash": "10521346f5858dcc2ff48beed19f61573327eceb9cc603d4524e5c739639834a",
+      "content_type": "text/plain",
+      "size": 38655,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/4f679e74-4c29-453e-9699-56ab9a46e2bd/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/4f679e74-4c29-453e-9699-56ab9a46e2bd/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143709827Z"
+    },
+    "size": 38655,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "09.txt",
+    "id": "88e7d9ff-a49b-4946-8c28-92531bcbb94b",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "3dcb5164-3632-4ccc-9197-e1bf649b7068",
+      "sha256_hash": "80db8b0f23bb10b8c1968a358b68dde270101db0bb3c85de609a90c39ad6b299",
+      "content_type": "text/plain",
+      "size": 31664,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/88e7d9ff-a49b-4946-8c28-92531bcbb94b/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/88e7d9ff-a49b-4946-8c28-92531bcbb94b/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143712487Z"
+    },
+    "size": 31664,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "10.txt",
+    "id": "7bfd75cf-8188-429a-bb99-bd225196875f",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "b6d6e625-a8c2-49ac-a487-3303923fd8c3",
+      "sha256_hash": "d4f2299fa943aa8e8ce746c3390c9061318b43016558ff7b2a306c53b02c94d0",
+      "content_type": "text/plain",
+      "size": 38006,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/7bfd75cf-8188-429a-bb99-bd225196875f/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/7bfd75cf-8188-429a-bb99-bd225196875f/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143715167Z"
+    },
+    "size": 38006,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "11.txt",
+    "id": "3fd683ac-276a-45ab-90c6-f1f8b121adae",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "3a74f27b-e906-432a-a579-15099849a19e",
+      "sha256_hash": "404017b3cdcc7df0043c58714aa2109cabcfc92ac9428e6dce5542a317cfd1dd",
+      "content_type": "text/plain",
+      "size": 49709,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/3fd683ac-276a-45ab-90c6-f1f8b121adae/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/3fd683ac-276a-45ab-90c6-f1f8b121adae/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143717837Z"
+    },
+    "size": 49709,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "12.txt",
+    "id": "703e251b-6aa4-430b-8f86-2666d79d7b7d",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "0d3f172c-134a-4065-a50e-9ed61664ade6",
+      "sha256_hash": "cdb34dc929f4f8f7e85483360bee6162e663d42b734acd6d5ccc688ee842a4fa",
+      "content_type": "text/plain",
+      "size": 48652,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/703e251b-6aa4-430b-8f86-2666d79d7b7d/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/703e251b-6aa4-430b-8f86-2666d79d7b7d/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143720737Z"
+    },
+    "size": 48652,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "13.txt",
+    "id": "a37a371b-9d3e-4471-ad04-b3d85153a809",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "c3c9238d-46dd-4390-9fa8-3a551a9d03f8",
+      "sha256_hash": "fbecb5b1d334159abf293a6693f6466544fe64a7088e0491a6b7aba3e88f1752",
+      "content_type": "text/plain",
+      "size": 32097,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/a37a371b-9d3e-4471-ad04-b3d85153a809/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/a37a371b-9d3e-4471-ad04-b3d85153a809/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143723497Z"
+    },
+    "size": 32097,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "14.txt",
+    "id": "9f09ae0f-45af-42b4-b225-fc44b82094fe",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "96629be5-a566-4778-9e77-8b6358e56af4",
+      "sha256_hash": "51a88cba485bbe555a77ab50514d615226e00a836710160c0006ed4efcf006a0",
+      "content_type": "text/plain",
+      "size": 44963,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/9f09ae0f-45af-42b4-b225-fc44b82094fe/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/9f09ae0f-45af-42b4-b225-fc44b82094fe/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143726247Z"
+    },
+    "size": 44963,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "15.txt",
+    "id": "8b69b9af-5dd3-4904-835b-d474282a0868",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "a514d28d-af97-4129-b9c6-a4d0e8fff18e",
+      "sha256_hash": "f6109a247273968ae3650cb410a82b158824c0843da735a20cd9a06474cbe7f0",
+      "content_type": "text/plain",
+      "size": 33622,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/8b69b9af-5dd3-4904-835b-d474282a0868/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/8b69b9af-5dd3-4904-835b-d474282a0868/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143728947Z"
+    },
+    "size": 33622,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "16.txt",
+    "id": "9af0898b-6df1-4844-a82e-041802ef8f76",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "4b792491-1482-4489-ad27-6f1abdb78b67",
+      "sha256_hash": "81a34bef9a6c7fde4676fd3389bd4b422796f5701c51f64106c09fbb3e7d7f76",
+      "content_type": "text/plain",
+      "size": 51754,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/9af0898b-6df1-4844-a82e-041802ef8f76/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/9af0898b-6df1-4844-a82e-041802ef8f76/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143731647Z"
+    },
+    "size": 51754,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "17.txt",
+    "id": "dc1b186e-f21e-4363-8d35-a1c410b0ed86",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "d927562d-fb16-40c8-bb49-2141b9849319",
+      "sha256_hash": "ef5917de0f172debe0313787a85fb5e48dd6a2c94ff62e100a247fc5e532bc01",
+      "content_type": "text/plain",
+      "size": 38921,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/dc1b186e-f21e-4363-8d35-a1c410b0ed86/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/dc1b186e-f21e-4363-8d35-a1c410b0ed86/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143734538Z"
+    },
+    "size": 38921,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "18.txt",
+    "id": "ab4b9064-10be-48bb-aef0-16f5cc2b1740",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "fb245564-f145-488c-b91d-98f9d3f7477d",
+      "sha256_hash": "831b55cc8908fac06de0c39ffa30d4b4914bbdc44db04622a3966f3b009a221d",
+      "content_type": "text/plain",
+      "size": 33279,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/ab4b9064-10be-48bb-aef0-16f5cc2b1740/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/ab4b9064-10be-48bb-aef0-16f5cc2b1740/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143737268Z"
+    },
+    "size": 33279,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "19.txt",
+    "id": "9a236461-6f9e-4048-be51-a5ae0de2a849",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "ed847778-65f5-4098-82ea-a4bb80ce6e9b",
+      "sha256_hash": "bb963a363d58cbfe51d325eb883593b9fa2f438a464acab7433b984951506274",
+      "content_type": "text/plain",
+      "size": 40100,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/9a236461-6f9e-4048-be51-a5ae0de2a849/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/9a236461-6f9e-4048-be51-a5ae0de2a849/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143741148Z"
+    },
+    "size": 40100,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "20.txt",
+    "id": "e572b02c-8070-4f43-81a5-afec18f8ae68",
+    "folder_id": "65278138-2229-4e51-a18d-25b28f2978d1",
+    "content_details": {
+      "id": "9a270fd5-6d17-4930-8d99-85e034ef9b58",
+      "sha256_hash": "5384183557ebd0982f00a1ce62202ae926f54d05bdf9d25da1ffd2cda2c10f7c",
+      "content_type": "text/plain",
+      "size": 29404,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/e572b02c-8070-4f43-81a5-afec18f8ae68/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/e572b02c-8070-4f43-81a5-afec18f8ae68/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.143743888Z"
+    },
+    "size": 29404,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "VideoLabels"
+  },
+  {
+    "filename": "01.7z",
+    "id": "8e7d35c7-d0d3-4870-b52e-c2a86c6bc729",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "b4c1d754-7752-47bb-9b61-22566d3bad30",
+      "sha256_hash": "2ccc5fb0a2ffffb702ab522ae3832ac321c45e9828d344d6e944b658faf7577b",
+      "content_type": "application/x-7z-compressed",
+      "size": 383995242,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/8e7d35c7-d0d3-4870-b52e-c2a86c6bc729/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/8e7d35c7-d0d3-4870-b52e-c2a86c6bc729/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704862728Z"
+    },
+    "size": 383995242,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "02.7z",
+    "id": "37801eb4-c7fd-4aeb-86da-df99d59d67d8",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "a8b365f4-326c-4bac-bf30-e965d4a42b45",
+      "sha256_hash": "4ef48026c7934c68ce0fa6131591b95994b15184ed6c955b1d541bdd333852e3",
+      "content_type": "application/x-7z-compressed",
+      "size": 374797138,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/37801eb4-c7fd-4aeb-86da-df99d59d67d8/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/37801eb4-c7fd-4aeb-86da-df99d59d67d8/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704867828Z"
+    },
+    "size": 374797138,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "03.7z",
+    "id": "5d48f5e6-4eb3-4a30-a31c-d8b28d6ffc04",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "d83b4cfd-c541-470c-8319-c47dde267037",
+      "sha256_hash": "ec009eedad2f5d0e0af11f2b3089631bca94105b6889d834a1b7363f11fbdd0f",
+      "content_type": "application/x-7z-compressed",
+      "size": 283050029,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/5d48f5e6-4eb3-4a30-a31c-d8b28d6ffc04/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/5d48f5e6-4eb3-4a30-a31c-d8b28d6ffc04/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704871028Z"
+    },
+    "size": 283050029,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "04.7z",
+    "id": "865ad275-3170-4ac4-a0a9-f1765cf3ddb0",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "87c9e0ad-ed55-4523-88c7-6e37d209f70a",
+      "sha256_hash": "8f74bf47b926b02dbb2b13bb6a1c29f1b23b1f836c196e31a6ac2055d5e6d918",
+      "content_type": "application/x-7z-compressed",
+      "size": 448380837,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/865ad275-3170-4ac4-a0a9-f1765cf3ddb0/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/865ad275-3170-4ac4-a0a9-f1765cf3ddb0/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704874399Z"
+    },
+    "size": 448380837,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "05.7z",
+    "id": "fb7c5458-85fe-4223-a7bc-f5c421782633",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "db1ea122-8143-4767-8274-614d3be57bd7",
+      "sha256_hash": "1f1e4b92af40f408060cdf4f5e72b6d0c0bd6976b5c6ce588111d078f6dcc64e",
+      "content_type": "application/x-7z-compressed",
+      "size": 352697194,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/fb7c5458-85fe-4223-a7bc-f5c421782633/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/fb7c5458-85fe-4223-a7bc-f5c421782633/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704877639Z"
+    },
+    "size": 352697194,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "06.7z",
+    "id": "945e0dee-25a9-49d4-862e-63b370d9964c",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "38dac010-4227-4a2f-9bd6-dd3c73b90aa4",
+      "sha256_hash": "742390d32aa86cc7d5f55a86d8e8910d699c2f88afb4158856c29bf6187ae5c0",
+      "content_type": "application/x-7z-compressed",
+      "size": 416902367,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/945e0dee-25a9-49d4-862e-63b370d9964c/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/945e0dee-25a9-49d4-862e-63b370d9964c/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704880699Z"
+    },
+    "size": 416902367,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "07.7z",
+    "id": "006cccde-cda5-4553-8c45-59b3d95c6dbd",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "f907a2b3-b9bf-457e-96eb-949d88067369",
+      "sha256_hash": "144b8a03c86cf5308be006ab65d2552251fc667b3720de9036433b9a553015f6",
+      "content_type": "application/x-7z-compressed",
+      "size": 364652216,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/006cccde-cda5-4553-8c45-59b3d95c6dbd/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/006cccde-cda5-4553-8c45-59b3d95c6dbd/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704883599Z"
+    },
+    "size": 364652216,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "08.7z",
+    "id": "7f30640a-e8dc-4dfe-9bfc-fc71dc0217c9",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "ff4606c2-2d85-416d-96fa-221bc5281a7e",
+      "sha256_hash": "86b252d45c13496f46c65db6f27eeda1ed8078a44dadf9bb533b8f77abe86a6c",
+      "content_type": "application/x-7z-compressed",
+      "size": 468462267,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/7f30640a-e8dc-4dfe-9bfc-fc71dc0217c9/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/7f30640a-e8dc-4dfe-9bfc-fc71dc0217c9/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704886709Z"
+    },
+    "size": 468462267,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "09.7z",
+    "id": "36a1d6bc-f7a8-491f-a112-02b48f182bd1",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "9e6885d9-7012-4dc7-a0a5-cb961275e8ae",
+      "sha256_hash": "86b63b445b688bef6e5538e0c8b55e8664d3031a6c93083041c835c2bf346cd5",
+      "content_type": "application/x-7z-compressed",
+      "size": 387146589,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/36a1d6bc-f7a8-491f-a112-02b48f182bd1/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/36a1d6bc-f7a8-491f-a112-02b48f182bd1/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704890029Z"
+    },
+    "size": 387146589,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "10.7z",
+    "id": "0e060549-c407-47b0-a8b5-f0f059d953ab",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "3ee59843-614e-4a8e-8779-1a22f7a61108",
+      "sha256_hash": "aee4e04741e4b99c72e9f8f47e713faada3c7dc6d70b566a76db08abaf1429ea",
+      "content_type": "application/x-7z-compressed",
+      "size": 475198877,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/0e060549-c407-47b0-a8b5-f0f059d953ab/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/0e060549-c407-47b0-a8b5-f0f059d953ab/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704893019Z"
+    },
+    "size": 475198877,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "11.7z",
+    "id": "51b13398-cdb6-4e59-9ce4-0a32e73596cf",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "0aa5d156-5c83-468b-b3db-1eb17eb5d0e1",
+      "sha256_hash": "bf31575a97f72dc5b81faba1efe0244f95a933a1b6ff0b78df35dee7307714cc",
+      "content_type": "application/x-7z-compressed",
+      "size": 624637687,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/51b13398-cdb6-4e59-9ce4-0a32e73596cf/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/51b13398-cdb6-4e59-9ce4-0a32e73596cf/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704895979Z"
+    },
+    "size": 624637687,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "12.7z",
+    "id": "b902f315-ca32-46b7-a6f6-333d8c60a8ee",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "b3c72bff-f42c-4b15-95ee-67d708b10ccc",
+      "sha256_hash": "223367804f1fcec64f9f4e67f8107318deb6a1626047dd05a0f06413587e9ceb",
+      "content_type": "application/x-7z-compressed",
+      "size": 609273811,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/b902f315-ca32-46b7-a6f6-333d8c60a8ee/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/b902f315-ca32-46b7-a6f6-333d8c60a8ee/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704906849Z"
+    },
+    "size": 609273811,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "13.7z",
+    "id": "54861f9d-887c-4623-9f8f-5acaaf9b299e",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "5e67682c-a4ea-4dfc-811f-9b80f516c453",
+      "sha256_hash": "39b9ad305ed418664f4639c6eefeceeb342719f5cea63965629d695240bea5d8",
+      "content_type": "application/x-7z-compressed",
+      "size": 427752877,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/54861f9d-887c-4623-9f8f-5acaaf9b299e/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/54861f9d-887c-4623-9f8f-5acaaf9b299e/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704910139Z"
+    },
+    "size": 427752877,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "14.7z",
+    "id": "f1cd3b57-ef5f-4c4d-945a-7865c41333c4",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "45bf090b-4ca7-4400-b562-f5fa8c5c6866",
+      "sha256_hash": "78c83fb151372cb05db64f86d2b0f69a3f62eabdc84a5654035c223c9b51afe8",
+      "content_type": "application/x-7z-compressed",
+      "size": 572745645,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/f1cd3b57-ef5f-4c4d-945a-7865c41333c4/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/f1cd3b57-ef5f-4c4d-945a-7865c41333c4/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704913569Z"
+    },
+    "size": 572745645,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "15.7z",
+    "id": "2c1c2d59-5a9c-4fa4-935c-691a0fe2ecb4",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "3c5b0b76-bdcf-4a3a-bbf3-a1d881d50c1e",
+      "sha256_hash": "80e6810ee25c6219cdd42f52c106b35c6aed85cdce2f06f89de824c5ab891842",
+      "content_type": "application/x-7z-compressed",
+      "size": 424540946,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/2c1c2d59-5a9c-4fa4-935c-691a0fe2ecb4/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/2c1c2d59-5a9c-4fa4-935c-691a0fe2ecb4/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.704916779Z"
+    },
+    "size": 424540946,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "16.7z",
+    "id": "824548bf-3a61-4f71-80a0-be8750b556f2",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "188198f6-bd5c-437b-9272-a07a3601d70a",
+      "sha256_hash": "3ff659f8e63c12f9886932a15eb4b15387b4b7160ba79c54146a0ccc26889035",
+      "content_type": "application/x-7z-compressed",
+      "size": 652759653,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/824548bf-3a61-4f71-80a0-be8750b556f2/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/824548bf-3a61-4f71-80a0-be8750b556f2/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.70492Z"
+    },
+    "size": 652759653,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "17.7z",
+    "id": "e9e59b21-d9e4-4146-93fc-4ae97120ef8f",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "107398de-9ac0-4968-b9d4-822315aa9f0a",
+      "sha256_hash": "ebb0e68a1d12ad5adff6b736ca4ecdf99beb67e806bbc05a688a589c0efa3eee",
+      "content_type": "application/x-7z-compressed",
+      "size": 494290847,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/e9e59b21-d9e4-4146-93fc-4ae97120ef8f/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/e9e59b21-d9e4-4146-93fc-4ae97120ef8f/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.70492342Z"
+    },
+    "size": 494290847,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "18.7z",
+    "id": "e3702395-65cc-4d76-972a-fdfd3d2380cb",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "92203004-494c-4752-9554-9fd360d61aa4",
+      "sha256_hash": "3bf9b9a2831f201cf7bbbc4cdabb79d7d54980aa99c85dc68a55dd7ef4d3349d",
+      "content_type": "application/x-7z-compressed",
+      "size": 419738755,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/e3702395-65cc-4d76-972a-fdfd3d2380cb/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/e3702395-65cc-4d76-972a-fdfd3d2380cb/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.70492654Z"
+    },
+    "size": 419738755,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "19.7z",
+    "id": "7c6f1e03-f90a-4808-8352-a67f7550555b",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "8678dca2-73a7-4083-9c99-28120bafad5b",
+      "sha256_hash": "3cf7bfa8775979c5c65b4015f9953cb542421e1266a9fdf9f1fc051da72724b3",
+      "content_type": "application/x-7z-compressed",
+      "size": 511605300,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/7c6f1e03-f90a-4808-8352-a67f7550555b/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/7c6f1e03-f90a-4808-8352-a67f7550555b/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.70492967Z"
+    },
+    "size": 511605300,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "20.7z",
+    "id": "3339878d-bf53-4351-8e8b-97f08e64fc85",
+    "folder_id": "48d56a08-c79c-4f6f-932d-aa809854880c",
+    "content_details": {
+      "id": "5113f16b-e694-439b-ba2b-bdfb9ff91a0c",
+      "sha256_hash": "a8ea67a0d11e871b2ccb0757474c2d36382bc20ae73e2c0ba49a6b8f410c8e30",
+      "content_type": "application/x-7z-compressed",
+      "size": 381618815,
+      "created_date": "2019-01-08T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/3339878d-bf53-4351-8e8b-97f08e64fc85/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/3339878d-bf53-4351-8e8b-97f08e64fc85/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:29.70493267Z"
+    },
+    "size": 381618815,
+    "last_modified_date": "2019-01-08T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "Videos"
+  },
+  {
+    "filename": "ReadMe_UW_IOM.txt",
+    "id": "be699163-9a2b-4a46-bbfd-6fdbe03901f9",
+    "folder_id": "b6c018aa-679c-4561-b2da-9393469bafe4",
+    "content_details": {
+      "id": "5677de5a-8c66-43fd-9fb0-9b5e6e8d214f",
+      "sha256_hash": "fc742401e43704a15f52a619e685877fe8057e29ced0e9b36ec30e39163b10ae",
+      "content_type": "text/plain",
+      "size": 1885,
+      "created_date": "2019-01-11T00:00:00Z",
+      "download_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/be699163-9a2b-4a46-bbfd-6fdbe03901f9/file_downloaded",
+      "view_url": "https://data.mendeley.com/public-files/datasets/xwzzkxtf9s/files/be699163-9a2b-4a46-bbfd-6fdbe03901f9/file_viewed",
+      "download_expiry_time": "2126-11-07T07:53:30.549242685Z"
+    },
+    "size": 1885,
+    "last_modified_date": "2019-01-11T00:00:00Z",
+    "status": "COMPLETED",
+    "folder_name": "UW IOM Dataset"
+  }
+]
